@@ -1,0 +1,16 @@
+# Do not remove this line or mod_rewrite rules and search engine friendly URLs will stop working
+<Files .htaccess>
+ order allow,deny
+ deny from all
+</Files>
+Options -Indexes
+
+RewriteBase /
+#RewriteEngine On
+#RewriteRule ^.*.(gif|jpe?g|bmp|png)$ /static/img/nothing.jpg 
+# custom error documents
+ErrorDocument 401 /index.php?err=401
+ErrorDocument 403 /index.php?err=403
+ErrorDocument 404 /index.php?err=404
+ErrorDocument 500 /index.php?err=500
+

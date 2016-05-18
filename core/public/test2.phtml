@@ -1,0 +1,21 @@
+<?php 
+// echo isset($_SESSION['security']) ? $_SESSION['security'] : 'not set';
+// print_r($_SESSION['test']);
+// eval('print_r(hello)');
+// echo is_null(null) ? 'set' : 'not';
+$DFF = 20;
+$switch = 12;
+
+$nand = 4;
+$nor = 4;
+$or = 6;
+$inverse = 2;
+$sar_part = $DFF + 2 * $switch;
+$sar_uni = $sar_part * 12 + 10 * $or;
+
+$signal = 5 * $DFF + $inverse * 2 + $nand * 2 + $nor + $or;
+$sar_all = $sar_uni + $signal;
+// echo $sar_all.'<br>';
+// echo $sar_all - 192 - 100;
+$ss =null;
+echo ucwords('index');

@@ -1,0 +1,37 @@
+html{
+width:100%;
+/*overflow-x:hidden;*/
+}
+body {
+  margin: auto;
+  padding: 0;
+  /*overflow-x: hidden;*/
+  /*cursor: url('/static/img/sword_art_online_2.jpg');*/
+  width: inherit;
+  /*min-width: 500px;*/
+  /*background-image: url("/static/img/sword_art_online_2.jpg");*/
+  
+}
+
+/*div.wrapper {
+  margin: -19px auto 0;
+  min-height: 400px;
+  padding: 10px 0;
+  border: 0;
+  width: 1129px;
+  text-align: left;
+}*/
+
+div.wrapper div {
+  margin-left: 20px;
+}
+
+div.imglist img{
+  height: 180px;
+  width: 180px;
+  
+}
+
+div.music {
+
+}

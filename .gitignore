@@ -1,0 +1,14 @@
+#ignore
+jx3/
+static/music/
+static/pic
+static/images/
+blog/
+users/
+
+core/control/Mail.class.php
+#others
+
+.DS_Store
+.DS_Store?
+._*

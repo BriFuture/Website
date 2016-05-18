@@ -1,0 +1,83 @@
+<?php 
+if(!defined('VERSION')) 
+{
+  header('Location:/');
+  exit();
+}
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <!-- <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" /> -->
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+  <!-- jQuery文件-->
+  <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+  <!-- 新 Bootstrap 核心 CSS 文件 -->
+  <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+  <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="/css/header-footer.css" />
+  <link rel="stylesheet" type="text/css" href="/css/err.css" />
+  <title>
+    <?php  $this->err_title_output($this->view['errcode']); ?>  
+  </title>
+</head>
+<body>
+  <?php include $this->view['header'];  ?>
+  <div class="container">
+    <?php if($this->view['errcode'] == '401'): ?>
+      <div class="contents">
+        <div class="detail alert alert-danger">
+          <h1>没有权限访问</h1>
+        </div>
+        <!-- <hr> -->
+        <div class="detail alert alert-info">
+          <p>你没有权限查看当前文件或目录<br />点击<a href = "/" class="btn btn-success btn-sm">SunSmell</a>返回主页。</p>
+        </div>
+      </div>
+    <?php elseif($this->view['errcode'] == '403'): ?>
+      <div class="contents">
+        <div class="alert alert-danger">
+          <h1>没有权限访问</h1>
+        </div>
+        <!-- <hr> -->
+        <div class="detail alert alert-info">
+          <p>你没有权限或被禁止查看当前文件或目录<br />点击<a href = "/" class="btn btn-success btn-sm">SunSmell</a>返回主页。</p>
+        </div>
+      </div>
+    <?php elseif($this->view['errcode'] == '500'): ?>
+      <div class="contents">
+        <div class="alert alert-danger">
+          <h1>服务器内部错误</h1>
+        </div>
+        <!-- <hr> -->
+        <div class="detail alert alert-info">
+          <p>前方似乎正在施工(╯‵□′)╯︵┻━┻，你无法访问<br />点击<a href = "/" class="btn btn-success btn-sm">SunSmell</a>返回主页。</p>
+        </div>
+      </div>
+    <?php elseif(isset($this->view['msg']) && !isset($this->view['msg']['errcode'])): ?>
+      <div class="contents">
+        <div class="alert alert-danger">
+          <h1><?php echo isset($this->view['msg']['cTitle']) ? $this->view['msg']['cTitle'] : '服务器内部出错了！'; ?></h1>
+        </div>
+        <!-- <hr> -->
+        <div class="detail alert alert-info">
+          <p>详细信息：</p>
+          <p><?php echo isset($this->view['msg']['content']) ? $this->view['msg']['content'] : '未知的错误'; ?></P>
+        </div>
+      </div>
+    <?php else : #($errcode == '404'): //默认的错误 ?>
+      <div class="contents">
+        <div class="alert alert-danger">
+          <h1>页面找不到了</h1>
+        </div>
+        <!-- <hr> -->
+        <div class="detail alert alert-info">
+          <p>你要查看的页面 <?php echo $_SERVER['REQUEST_URI']; ?> 也许在writting中<br />(╯‵□′)╯︵┻━┻<br />目前无法访问，点击<a href = "/" class="btn btn-success btn-sm">SunSmell</a>返回主页。</p>
+        </div>
+      </div>
+    <?php endif; ?>
+  </div>
+  <?php include $this->view['footer']; ?>
+</body>
