@@ -40,7 +40,15 @@ class Base {
   const URL_LAYER_PAGE   = 'page';
   const URL_LAYER_VIEW   = 'view';
 
+  /**
+   * 是否暂停报告事件的锁
+   */
   private $suspend;
+
+  /**
+   * 所有模块
+   */
+  private $modules;
 
   public function __construct() {
 
@@ -58,9 +66,9 @@ class Base {
 
   /**
    * 设置URL格式
+   * @param  $url_format
    */
   public function set_url_format($url_format) {
-    // self::$url_format=$url_format;
     $configure = new Configure();
     return $configure->modify_config('URL_FORMAT', $url_format);
   }
@@ -73,24 +81,25 @@ class Base {
     $page = new Page();
 
     //跳转页面
-    if($this->super_get('err')) 
-    {
-      //转到错误页面
-      $err = $this->super_get('err');
-      $msg = array(
-        'errcode' => $err,
-      );
-      $page->err($msg);
-    }
-    elseif ($this->super_post_text('ajax')) {
+    if ($this->super_post_text('ajax')) {
       //如果是ajax请求
       //将请求转发给ajax
+
+      return;
     }
-    elseif($this->super_get(self::URL_LAYER_ACTION))
+    if($this->super_get(self::URL_LAYER_ACTION))
     {
       //需要将image单独出来，因为path不同
       //后期需要将连接改到control层
       switch ($this->super_get(self::URL_LAYER_ACTION)) {
+        case 'err':
+          //转到错误页面
+          $err = $this->super_get('err');
+          $msg = array(
+            'errcode' => $err,
+          );
+          $page->err($msg);
+          break;
         case 'util':
           # code...
           break;
@@ -123,10 +132,6 @@ class Base {
       case self::URL_REWITE:
         # code...
         $request=str_replace('.php', '.html', $request);
-/*        $pos=strpos($request, '?');
-        // echo "pos: ".$pos;
-        $request_only=substr($request, 0,$pos);
-        $get_query=substr($request, $pos);*/
         $path='/'.$request;
         break;
       case self: URL_FORMAT_INDEX:
@@ -246,13 +251,6 @@ class Base {
   }
 
   /**
-   * 注册模块
-   */
-  public function register_module($type, $path) {
-
-  }
-
-  /**
    * 注册层
    */
   public function register_layer() {
@@ -272,8 +270,8 @@ class Base {
   /**
    * 自定义的函数调用
    * 是因为弱语言类型的php不能直接支持多态和重载，所以使用分支形式来进行virtual invoke
-   * @param $function 被调用的函数
-   * @param $args     参数
+   * @param  $function 被调用的函数
+   * @param  $args     参数
    */
   public function base_call($function, $args) {
     switch(count($args)) {
@@ -296,7 +294,7 @@ class Base {
 
   /**
    * 退出，向观察者报告状态
-   * @param $reason  退出的原因
+   * @param  $reason  退出的原因
    */
   public function base_exit($reason=null) {
     $this->report_process('shutdown', $reason);
@@ -307,8 +305,30 @@ class Base {
    * @return  返回所有模块的所有信息
    */
   public function list_modules_info() {
-    return $qa_modules;
+    return $this->modules;
   }
+
+  /**
+   * 注册并添加模块
+   * @param  $type  模块类型
+   * @param  $name  名字
+   */
+  public function register_module($type, $include, $class, $name) {
+    if(isset($this->modules[$type][$name]))
+    {
+      $previous = $this->modules[$type][$name];
+      $this->fatal_error('A '.$type.' module named '.$name.' already exists. Please check there are no duplicate plugins. '.
+        "\n\nModule 1: ".$previous['directory'].$previous['include']);
+    }
+
+    $this->modules[$type][$name] = array(
+      // 'directory' => $directory,
+      // 'urltoroot' => $urltoroot,
+      'include'   => $include,
+      'class'     => $class,
+    );
+  }
+
 
   /**
    * @return 列出所有模块的类型
@@ -390,7 +410,35 @@ class Base {
    * @param $name  模块名
    */
   public function load_module($type, $name) {
+    $module = @$this->modules[$type][$name];
 
+    if(is_array($module))
+    {
+      if (isset($module['object'])) 
+      {
+        //如果有object
+        return $module['object'];
+      }
+
+      if(strlen(@$module['include']))
+      {
+        require_once $module['directory'].$module['include'];
+      }
+
+      if(strlen(@$module['class']))
+      {
+        //new 一个 module对象
+        $object = new $module['class'];
+
+        if(method_exists($object, 'load_module'))
+        {
+          $object->load_module($module['directory'], $module['urltoroot'], $type, $name);
+        }
+
+        $this->modules[$type][$name]['object'] = $object;
+        return $object;
+      }
+    }
   }
 
   /**
@@ -595,7 +643,7 @@ class Base {
   /**
    * 对数据库的数据进行缓存，缓存后直接读取某些数据
    * 如果设置了$value，就更新$name的值
-   * @param  $name  变量名
+   * @param  $name   变量名
    * @param  $value  相应的值
    */
   public function opt($name, $value=null) {
@@ -662,10 +710,10 @@ class Base {
   /**
    * 报告进程，向观察者发出通知
    * 使用观察者模式
-   * @param  $info
+   * @param  $method  报告进程所用的方法
    * @param  可以有多个参数
    */
-  public function report_process($info) {
+  public function report_process($method) {
     if($this->suspend)
     {
       //暂停报告事件
@@ -687,10 +735,11 @@ class Base {
 
   /**
    * 报告致命的错误
-   * @param $error 错误的内容
-   * @param $cTitle 错误内容的标题
+   * @param  $error  错误的内容，如果是数字的话，就直接数字对应显示http错误码错误
+   * @param  $cTitle 错误内容的标题
+   * @param  $title  网页标题
    */
-  public function fatal_error($error, $cTitle=null, $title=null) {
+  public function fatal_error($error, $cTitle=null, $title='发生了一个严重的错误') {
     //如果仅仅是数字的话，直接传递errcode就行
     if(is_numeric($error))
     {
@@ -699,25 +748,16 @@ class Base {
       ); 
     }
     else
+    {
       $msg = array(
         'title'    => $title,
         'cTitle'   => $cTitle,
         'content'  => $error,
       );
+    }
 
-    $page = new Page();
-    $page->err($msg);
-    exit;
-    
-  }
-
-  /**
-   * 反馈信息
-   * @param $msg array
-   * 
-   */
-  public function report_msg($msg) {
-    require PUBLIC_PATH.'err.php';
+    $err = new Err();
+    $err->view_err($msg);
     exit;
   }
 
