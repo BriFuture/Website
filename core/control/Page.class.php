@@ -77,12 +77,12 @@ class Page {
    */
   public function dispatch($file='Index', $view='index') {
     //首字母大写
-    $classname = ucwords(str_replace('.php', '', $file));
+    $classname = ucwords(str_replace('.php', '', strtolower($file)));
     //如果存在相应的方法
     if(class_exists($classname))
     {
       $class  = new $classname();
-      $method = 'view_'. $view;
+      $method = strtolower('view_'. $view);
       if(!method_exists($classname, $method))
       {
         $method = 'view_'.$classname;
