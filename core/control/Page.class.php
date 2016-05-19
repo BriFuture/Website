@@ -27,7 +27,7 @@ class Page {
    */
   public function render() {
     $trace = debug_backtrace();
-    //移去栈顶的元素
+    //移去栈顶的元素,返回的是被移除的元素
     array_shift($trace);
     // var_dump($trace);
     //找到最后一个调用该函数的类的名称

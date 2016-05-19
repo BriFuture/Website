@@ -98,6 +98,7 @@ class Options {
 	
 	/**
    * 默认的选项
+   * @param  $name
    */
   public function default_option($name) {
   	$fixed_defaults = array(
@@ -121,6 +122,7 @@ class Options {
 	
 	/**
    * 
+   * @param  $name
    */
   public function get_permit_options($name) {
   	$permits = array('permit_view','permit_post');

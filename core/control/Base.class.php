@@ -40,6 +40,8 @@ class Base {
   const URL_LAYER_PAGE   = 'page';
   const URL_LAYER_VIEW   = 'view';
 
+  private $suspend;
+
   public function __construct() {
 
   }
@@ -269,11 +271,27 @@ class Base {
 
   /**
    * 自定义的函数调用
+   * 是因为弱语言类型的php不能直接支持多态和重载，所以使用分支形式来进行virtual invoke
    * @param $function 被调用的函数
    * @param $args     参数
    */
   public function base_call($function, $args) {
-    
+    switch(count($args)) {
+      case 0:
+        return $function();
+      case 1:
+        return $function($args[0]);
+      case 2:
+        return $function($args[0], $args[1]);
+      case 3:
+        return $function($args[0], $args[1], $args[2]);
+      case 4:
+        return $function($args[0], $args[1], $args[2], $args[3]);
+      case 5:
+        return $function($args[0], $args[1], $args[2], $args[3], $args[4]);
+      case 6:
+        return $function($args[0], $args[1], $args[2], $args[3], $args[4], $args[5]);     
+    }
   }
 
   /**
@@ -281,42 +299,67 @@ class Base {
    * @param $reason  退出的原因
    */
   public function base_exit($reason=null) {
-
+    $this->report_process('shutdown', $reason);
+    exit;
   }
 
   /**
-   * 列出所有模块的信息
+   * @return  返回所有模块的所有信息
    */
   public function list_modules_info() {
-
+    return $qa_modules;
   }
 
   /**
-   * 列出所有模块的类型
+   * @return 列出所有模块的类型
    */
   public function list_modules_type() {
-
+    return array_keys($this->list_modules_info());
   }
 
   /**
-   * 列出所有模块
+   * 列出某种类型的所有模块
+   * @param  $type  模块类型
+   * @return 
+   *      如果存在某种类型的模块，则返回包含所有模型名字的数组，否则返回一个空数组
    */
-  public function list_modules() {
-
+  public function list_modules($type) {
+    $modules = $this->list_modules_info();
+    return is_array(@$modules[$type]) ? array_keys($modules[$type]) : array();
   }
 
   /**
    * 获取特定模块的信息
+   * @param  $type  模块类型
+   * @param  $name  模块名字
    */
   public function get_module_info($type, $name) {
-
+    $modules = $this->list_modules_info();
+    return isset($modules[$type][$name]) ? $modules[$type][$name] : null;
   }
 
   /**
    * 加载模块
+   * @param  $type  模块的类型
+   * @param  $method  方法
    */
-  public function load_module_with($type, $name) {
+  public function load_modules_with($type, $method) {
+    $modules = array();
 
+    $trynames = $this->list_modules($type);
+
+    foreach ($trynames as $tryname) {
+      //加载模块
+      $module = $this->load_module($type, $tryname);
+
+      //如果模块的方法存在
+      if(method_exists($module, $method))
+      {
+        $modules[$tryname] = $module;
+      }
+    }
+
+    return $modules;
   }
 
   /**
@@ -324,7 +367,21 @@ class Base {
    * @param $method  加载的方式
    */
   public function load_all_modules_with($method) {
+    $modules = array();
+    //列出模块的信息
+    $regmodules = $this->list_modules_info();
+    foreach($regmodules as $moduletype => $modulesinfo) {
+      foreach($modulesinfo as $modulename => $moduleinfo) {
+        $module = $this->load_module($moduletype, $modulename);
 
+        if(method_exists($module, $method))
+        {
+          $modules[$modulename] = $module;
+        }
+      }
+    }
+
+    return $modules;
   }
 
   /**
@@ -351,17 +408,42 @@ class Base {
   }
 
   /**
-   * 返回XML
+   * 将xml中的特定字符去掉
+   * @param  $string  特定字符
    */
   public function get_xml($string) {
-
+    return htmlspecialchars(preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', (string)$string ));
   }
 
   /**
-   * 返回JS
+   * 将JavaScript中的相应字符替换 并返回
+   * @param  $value  
+   *      如果是boolean的话返回 true or false
+   *      如果是数字的话返回数字
+   *      如果强制引号，需要转换
+   * @param  $force_quotes
+   *      是否强制引号  
    */
   public function get_js($value, $force_quotes=false) {
-
+    $boolean = is_bool($value);
+    if($boolean)
+    {
+      $value = $value ? 'true' : 'false';
+    }
+    if((is_numeric($value) || $boolean) && !$force_quotes) 
+    {
+      return $value;
+    }
+    else
+    {
+      return ".".strtr($value, array(
+        "'"  => "\\'",
+        "/"  => "\\/",
+        "\\" => "\\\\",
+        "\n" => "\\n",
+        "\r" => "\\n",
+        ))."'";
+    }
   }
 
   /**
@@ -415,13 +497,29 @@ class Base {
 
   /**
    * 检查HTTP请求是否超出了php变量的最大限度
+   * @return  bool
+   *      true  超过    false  没有超过
    */
   public function post_limit_exceeded() {
     if(in_array($_SERVER['REQUEST_METHOD'], array('POST', 'PUT')) && empty($_POST) && empty($_FILES))
     {
       $postmaxsize = ini_get('post_max_size');
       $unit = substr($postmaxsize, -1);
+      //如果单位不是数字的话
+      if(!is_numeric($unit)) {
+        //将postmaxsize的最后一个字符去掉
+        substr($postmaxsize, 0, -1);
+      }
+      switch (strtoupper($unit)) {
+        case 'G':
+          $postmaxsize *= 1024;
+        case 'M':
+          $postmaxsize *= 1024;
+        case 'K':
+          $postmaxsize *= 1024;
+      }
     }
+    return $_SERVER['CONTENT_LENGTH'] > $postmaxsize;
   }
 
   /**
@@ -471,7 +569,7 @@ class Base {
   }
 
   /**
-   *
+   * 
    */
   public function get_request_map() {
 
@@ -479,13 +577,23 @@ class Base {
 
   /**
    * 解析URL 
+   * @param  $url  
    */
   public function retrieve_url($url) {
+    $contents = @file_get_contents($url);
 
+    if(!strlen($contents) && function_exists('curl_exec'))
+    {
+      $curl = curl_init($url);
+      curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+      curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+      $contents = @curl_exec($curl);
+      curl_close($curl);
+    }
   }
 
   /**
-   * 不通过数据库，直接读取某些数据
+   * 对数据库的数据进行缓存，缓存后直接读取某些数据
    * 如果设置了$value，就更新$name的值
    * @param  $name  变量名
    * @param  $value  相应的值
@@ -520,16 +628,61 @@ class Base {
     echo nl2br($debug);
   }
   
-  public function report_event($event, $userid, $handle, $cookieid, $params=array()) {
+  /**
+   * 暂停报告事件
+   * @param  $suspend  是否暂停，默认为暂停
+   */
+  public function suspend_event_report($suspend=true) {
+    $this->suspend += ($suspend ? 1 : -1);
+    return $this->suspend;
+  }
 
+  /**
+   * 报告事件
+   * @param  $event
+   * @param  $userid
+   * @param  $handle
+   * @param  $cookieid
+   * @param  $params
+   */
+  public function report_event($event, $userid, $handle, $cookieid, $params=array()) {
+    if($this->suspend)
+    {
+      //暂停报告事件
+      return;
+    }
+
+    $event_modules = $this->load_modules_with('event', 'process_event');
+
+    foreach($event_modules as $event_module) {
+      $event_module->process_event($event, $userid, $handle, $cookieid, $params);
+    }
   }
 
   /**
    * 报告进程，向观察者发出通知
    * 使用观察者模式
+   * @param  $info
+   * @param  可以有多个参数
    */
   public function report_process($info) {
+    if($this->suspend)
+    {
+      //暂停报告事件
+      return;
+    }
+    //暂停其它事件，防止互斥，上锁
+    $this->suspend_event_report();
 
+    $args = func_get_args();
+    $args = array_slice($args, 1);
+
+    $process_modules = $this->load_modules_with('process', $method);
+    foreach($process_modules as $process_module) {
+      call_user_func_array(array($process_module, $method), $args);
+    }
+    //释放锁
+    $this->suspend_event_report(false);
   }
 
   /**
