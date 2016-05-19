@@ -80,7 +80,6 @@ class Security {
     //引用外部变量
     global $form_key_cookie_set;
 
-    require_once CORE_PATH.'Factory.class.php';
     $user = Factory::getUsers();
 
     if(!$user->is_logged_in() && !@$form_key_cookie_set) {

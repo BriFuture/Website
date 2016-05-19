@@ -107,7 +107,17 @@ class Base {
           $page->dispatch(strtolower($this->super_get(self::URL_LAYER_PAGE)), strtolower($this->super_get(self::URL_LAYER_VIEW)));
           break;
         case 'test':
-          $page->dispatch(strtolower($this->super_get(self::URL_LAYER_PAGE)));
+          if(DEBUG_MODE)
+          {
+            $page = PUBLIC_PATH.$this->super_get(self::URL_LAYER_PAGE).'.phtml';
+            include $page;
+          }
+          else
+          {
+            //找不到页面
+            $msg = array('errcode' => 404);
+            $page->err($msg);
+          }
           break;
         default:
           $page->dispatch('err');

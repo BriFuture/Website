@@ -9,8 +9,8 @@ RewriteBase /
 #RewriteEngine On
 #RewriteRule ^.*.(gif|jpe?g|bmp|png)$ /static/img/nothing.jpg 
 # custom error documents
-ErrorDocument 401 /index.php?err=401
-ErrorDocument 403 /index.php?err=403
-ErrorDocument 404 /index.php?err=404
-ErrorDocument 500 /index.php?err=500
+ErrorDocument 401 /index.php?action=err&err=401
+ErrorDocument 403 /index.php?action=err&err=403
+ErrorDocument 404 /index.php?action=err&err=404
+ErrorDocument 500 /index.php?action=err&err=500
 

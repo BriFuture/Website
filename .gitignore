@@ -6,6 +6,8 @@ static/images/
 blog/
 users/
 
+*.config
+
 core/control/Mail.class.php
 #others
 

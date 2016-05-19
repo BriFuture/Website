@@ -69,15 +69,12 @@ class Factory{
   static function autoload($class) {
     $php = CORE_PATH.strtr($class, '_', '/').'.class.php';
     require_once $php;
-    // echo $php;
   }
-  
-  public function __call($name, $args) {
-    // print_r($name.'=========>'.$args);
-  }
+
 
   /**
    *  通过名字返回相应类的对象
+   *  @deprecated  这样做并不方便修改
    */
   public static function getObject($name) {
     switch ($name) {
@@ -117,5 +114,13 @@ class Factory{
 
   public static function getPage() {
     return new Page();
+  }
+
+  public static function getOptions() {
+    return new Options();
+  }
+
+  public static function getDbLimits() {
+    return new DbLimits();
   }
 }

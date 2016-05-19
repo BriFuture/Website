@@ -20,6 +20,7 @@ class Err extends Page{
    * @param  $msg  额外的信息
    */
   public function view_err($msg=null) {
+    //如果设置了errcode，直接显示对应的http码页面
     if(isset($msg['errcode']))
     {
       $this->view['errcode'] = $msg['errcode'];
@@ -29,13 +30,15 @@ class Err extends Page{
       $this->view['msg'] = $msg;
     }
     else
+    {
       $this->view['errcode'] = @$_GET['err'];
+    }
 
     //引用常量
     // require CORE_PATH.'const.php';
 
-    if(isset($errcode) || isset($msg['errcode']))
-      $this->err_header_ouptut($errcode);
+    if(isset($this->view['errcode']))
+      $this->err_header_ouptut($this->view['errcode']);
     $this->render();
   }
 

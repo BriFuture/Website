@@ -24,7 +24,7 @@ class Options {
    * @param  $names  名称
    * @return  返回names对应的值
    */
-  public function get_options($names) {
+  public function get_option($names) {
   	global $options_cache, $options_loaded;
 
   	//如果options还没有缓存，将options从数据库中取出
