@@ -74,7 +74,6 @@ class Factory{
 
   /**
    *  通过名字返回相应类的对象
-   *  @deprecated  这样做并不方便修改
    */
   public static function getObject($name) {
     switch ($name) {
@@ -92,7 +91,7 @@ class Factory{
     return $object;
   }
 
-   /**
+  /**
    * 使用factory的autoload自动引用需要的文件
    * @return Security object
    */
@@ -108,6 +107,10 @@ class Factory{
     return new Users();
   }
 
+  public static function getBase() {
+    return new Base();
+  }
+  
   public static function getConfigure() {
     return new Configure();
   }

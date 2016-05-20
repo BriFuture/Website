@@ -57,6 +57,7 @@ class Security {
     }
     return $random;
   }
+
   /**
    * 创建key相关的键值对,
    * @param $key key的名称
@@ -169,30 +170,42 @@ class Security {
         else
         {
           if($logged_in)
+          {
             $silent_problems[] = '正在退出';
+          }
           else
           {
             //取出COOKIE中的key
             $key = @$_COOKIE['secure_key'];
 
             if(!isset($key))
+            {
               $silent_problems[] = '缺少 COOKIE KEY ';
+            }
             elseif(!strlen($key))
+            {
               $silent_problems[] = 'COOKIE KEY 为空 ';
+            }
             elseif(strlen($key) != FORM_KEY_LENGTH)
+            {
               $report_problems[] = 'COOKIE KEY ('.$key.') 无效 ';
+            }
           }
         }
 
         //如果没有问题产生
         if(empty($silent_problems) && empty($report_problems))
           if(strtolower(self::calc_form_security_hash($action, $timestamp)) != strtolower($hash))
+          {
             //但是随机码不匹配
             $report_problems[] = 'code 不匹配';
+          }
       }
       else
+      {
         //不是3个部分就有错误
         $report_problems[] = 'code '.$value.' 错误';
+      }
     }
     //记录错误
     if(count($report_problems))

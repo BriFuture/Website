@@ -6,7 +6,7 @@
  * last-modify: 0518
  */
 //定义版本
-defined('VERSION')       || define('VERSION', '1.0.4');
+defined('VERSION')       || define('VERSION', '1.0.5');
 //定义路径常量
 defined('WEB_ROOT'    )  || define('WEB_ROOT',     __DIR__."/"         );
 defined('CORE_PATH'   )  || define('CORE_PATH',    WEB_ROOT."core/"    );

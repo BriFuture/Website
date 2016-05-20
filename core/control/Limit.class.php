@@ -15,13 +15,17 @@ class Limit {
   const LIMIT_LOGIN = 'L';
 
   /**
-   * 
+   * 返回剩余的尝试次数
+   * @param  $action  行为
+   * @param  number  剩余次数
    */
   public function user_limit_remaining($action) {
     //
     $dbLimits = Factory::getDbLimits();
-    // $user_limits = $dbLimits->
-    // $ip_limits   = $dbLimits->
+    $dbUser   = Factory::getDbUser();
+    $base     = Factory::getBase();
+    $user_limits = $dbLimits->get_limit($dbUser->get_login_userid, $base->get_remote_ip(), $aciton);
+    $ip_limits   = $dbLimits->get_limit($dbUser->get_login_userid, $base->get_remote_ip(), $aciton);
 
     return $this->calc_limits_remaining($action, $user_limits, $ip_limits);
   }
@@ -77,7 +81,7 @@ class Limit {
   }
 
   /**
-   *
+   * 将屏蔽的ip string分离成数组
    */
   public function block_ips_explode($block_ip_string) {
     //将屏蔽的错误ip替换掉
@@ -87,7 +91,12 @@ class Limit {
   }
 
   /**
-   *
+   * 匹配被屏蔽的ip
+   * @param  $ip  要搜索的ip地址
+   * @param  $block_ip_clause  被屏蔽的原因
+   * @return  bool
+   *      true  匹配到被屏蔽的ip
+   *      false 未匹配到
    */
   public function block_ip_match($ip, $block_ip_clause) {
     //先将string类型的字符串转换成long再转换成string
@@ -113,19 +122,25 @@ class Limit {
   }
 
   /**
-   *
+   * 增加限制
+   * @param  $userid  用户id
+   * @param  $action  行为
    */
   public function limits_increase($userid, $action) {
     $options = Factory::getOptions();
     $period = (int) ($options->get_option('db_time') / 3600);
 
+    $dbLimits = Factory::getDbLimits();
+
     //如果用户已经登陆，记录登陆的id
     if(isset($userid))
     {
-
+      $dbLimits->add_user($userid, $action, $period, 1);
     }
 
+    $base = Factory::getBase();
     //记录远程ip
+    $dbLimits->add_ip($base->get_remote_ip(), $action, $period, 1);
   }
 
 }
