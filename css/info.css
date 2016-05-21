@@ -13,14 +13,26 @@ body {
   
 }
 
-.marketing .col-lg-4 {
-  margin-bottom: 20px;
-  text-align: center;
+/*div.wrapper {
+  margin: -19px auto 0;
+  min-height: 400px;
+  padding: 10px 0;
+  border: 0;
+  width: 1129px;
+  text-align: left;
+}*/
+
+div.wrapper div {
+  margin-left: 20px;
 }
-.marketing h2 {
-  font-weight: normal;
+
+div.imglist img{
+  height: 180px;
+  width: 180px;
+  
 }
-.marketing .col-lg-4 p {
-  margin-right: 10px;
-  margin-left: 10px;
+
+div.music {
+
 }
+

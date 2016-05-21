@@ -28,48 +28,65 @@ if(!defined('VERSION')) {
 <body>
   <?php include $this->view['header']; ?>
   <!-- <div class="jumbotron"> -->
-    <div class="container">
-      <div>
-        <?php if(DEBUG_MODE):?>
-        <div class="alert alert-warning">
-          <p class="text-left">该网站还有很多东西没有完工！<br /></p>
-        </div>  
-        <?php endif;?>
-        <div class="alert alert-success">
-          <p class="text-left">本机IP为： <?php echo $_SERVER['REMOTE_ADDR']; ?> <br /></p>
-          <p class="text-left">访问的地址为：<?php echo $_SERVER['SERVER_NAME']; ?><br /></p>
-        </div>
-        <div class="alert alert-success">
-          <p class="text-left">访问时间为:<?php echo date("Y-m-d h:i:s",$_SERVER['REQUEST_TIME']); ?></p>
-        </div>
-        <div class="alert alert-success">
-          <p class="text-left">使用的客户端代理： <?php echo $_SERVER['HTTP_USER_AGENT'];?></p>
+  <div id="carousel-index" class="carousel slide" data-ride="carousel">
+  <!-- Indicators -->
+  <ol class="carousel-indicators">
+    <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+    <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+    <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+  </ol>
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner" role="listbox">
+      <div class="item active">
+        <img src="/static/img/sword_art_online_4.jpg" alt="图片1">
+        <div class="carousel-caption">
+          这只是一组烧流量的图片
         </div>
       </div>
-      <div class="music">
-        <audio controls="controls" loop="loop" >
-          <source src="/static/music/雁回林.mp3" type="audio/mp3" />
-          <source src="/static/music/02.mp3" type="audio/mp3" />
-          <source src="/static/music/03.mp3" type="audio/mp3" />
-          <source src="/static/music/04.mp3" type="audio/mp3" />
-          <source src="/static/music/05.mp3" type="audio/mp3" />
-          <embed height="100%" width="100%" src="/static/music/雁回林.mp3" />
-        </audio>
+      <div class="item">
+        <img src="/static/img/sword_art_online_2.jpg" alt="图片2">
+        <div class="carousel-caption">
+          这只是一组烧流量的图片
+        </div>
       </div>
-      <!-- <div class="imglist"> -->
-        <?php #Base::html_content('img', array('src'=>'index.php?action=image&p=static&a=pic&n=dynamic.gif'));  ?>
-        <?php #Base::html_content('img', array('src'=>'/static/pic/dynamic-1.gif'));  ?>
-        <?php #Base::html_content('img', array('src'=>'/static/pic/dynamic-2.gif'));  ?>
-        <?php #Base::html_content('img', array('src'=>'/static/pic/dynamic-3.gif'));  ?>
-      <!-- </div> -->
-      <?php if(isset($showIp) && $showIp) : ?>
-      <div>
-        <p>以下是IP138提供的IP查询</p>
-        <iframe src="/index.php?action=getip" style="width: 100%; height: 300px"></iframe>
+      <div class="item">
+        <img src="/static/img/sword_art_online_3.jpg" alt="图片3">
+        <div class="carousel-caption">
+          这只是一组烧流量的图片
+        </div>
       </div>
-      <?php endif; ?>
     </div>
-  <!-- </div> -->
+    <!-- Controls -->
+    <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+      <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+      <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
+  </div>
+  <div class="container marketing">
+    <div class="row">
+      <div class="col-lg-4">
+
+      </div>
+      <div class="col-lg-4">
+        <img class="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" height="140" width="140">
+        <h2>My Blog</h2>
+        <p>my blog with wordpress</p>
+        <p><a class="btn btn-default" href="/wordpress/" role="button">View details »</a></p>
+      </div>
+      <div class="col-lg-4">
+
+      </div>
+    </div>
+    <?php if(DEBUG_MODE):?>
+    <div class="alert alert-warning">
+      <p class="text-left">该网站还有很多东西没有完工！<br /></p>
+    </div>  
+    <?php endif;?>
+  </div>
   <?php include $this->view['footer']; ?> 
 </body>
 </html>
