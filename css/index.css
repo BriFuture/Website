@@ -24,3 +24,12 @@ body {
   margin-right: 10px;
   margin-left: 10px;
 }
+
+.col-link-item {
+  display: block;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  padding: 15px;
+
+}
+

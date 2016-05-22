@@ -39,6 +39,7 @@ class Base {
   const URL_LAYER_ACTION = 'action';
   const URL_LAYER_PAGE   = 'page';
   const URL_LAYER_VIEW   = 'view';
+  const URL_LAYER_CAT    = 'cat';
 
   /**
    * 是否暂停报告事件的锁
@@ -106,6 +107,13 @@ class Base {
         case self::URL_LAYER_PAGE:
           $page->dispatch(strtolower($this->super_get(self::URL_LAYER_PAGE)), strtolower($this->super_get(self::URL_LAYER_VIEW)));
           break;
+        case 'ext':
+          $cat = $this->super_get(self::URL_LAYER_CAT);
+          if(is_dir($cat) && file_exists($cat.'/index.php'))
+          {
+            include $cat.'/index.php';
+          }
+          break;  
         case 'test':
           if(DEBUG_MODE)
           {
