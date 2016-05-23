@@ -5,31 +5,63 @@ width:100%;
 body {
   margin: auto;
   padding: 0;
-  /*overflow-x: hidden;*/
-  /*cursor: url('/static/img/sword_art_online_2.jpg');*/
   width: inherit;
-  /*min-width: 500px;*/
-  /*background-image: url("/static/img/sword_art_online_2.jpg");*/
-  
 }
 
-.marketing .col-lg-4 {
+#carousel-index {
   margin-bottom: 20px;
-  text-align: center;
 }
+
 .marketing h2 {
   font-weight: normal;
 }
-.marketing .col-lg-4 p {
-  margin-right: 10px;
-  margin-left: 10px;
+
+.row a{
+  text-decoration-line: none;
 }
 
 .col-link-item {
-  display: block;
+  /*display: block;*/
   box-sizing: border-box;
   border: 1px solid #ddd;
-  padding: 15px;
+  padding: 15px 0;
+  /*margin: 10px;*/
+  margin-bottom: 20px;
+  text-align: center;
+  /*width: 250px;*/
+}
+
+.col-link-item p {
+  margin-right: 10px;
+  margin-left: 10px;
 
 }
 
+.col-link-item img {
+  width: 60px;
+  height: 60px;
+}
+
+
+@media (min-width: 768px)  {
+  #carousel-index {
+    margin-bottom: 60px;
+  }
+}
+
+@media (min-width: 992px)  {
+  #carousel-index {
+    margin-bottom: 60px;
+  }
+
+}
+
+@media (min-width: 1200px) {
+  #carousel-index {
+    margin-bottom: 80px;
+  }
+  .col-link-item img {
+    width: 120px;
+    height: 120px;
+  }
+}
