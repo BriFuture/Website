@@ -68,7 +68,8 @@ if(!defined('VERSION')) {
   </div>
   <div class="container-fluid marketing">
     <div class="row">
-      <div class="col-lg-3 col-sm-4 col-xs-8 col-xs-offset-2 col-link-item">
+      <?php  for($i=0; $i<3; $i++):?>
+      <div class="col-sm-4 col-xs-6 col-xs-offset-3 col-link-item ">
         <a class="" href="<?php 
           #echo '/?action=ext&cat=wordpress';
           echo '//blog.sunsmell.cc/'; # ?>">
@@ -79,28 +80,8 @@ if(!defined('VERSION')) {
           </div>
         </a>
       </div>
-      <div class="col-lg-3 col-sm-4 col-xs-8 col-xs-offset-2 col-link-item ">
-        <a class="" href="<?php 
-          #echo '/?action=ext&cat=wordpress';
-          echo '//blog.sunsmell.cc/'; # ?>">
-          <div class="">  
-            <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" class="img-thumbnail">
-            <h2>My Blog</h2>
-            <p>my blog powered by wordpress</p>
-          </div>
-        </a>
-      </div>
-      <div class="col-lg-3 col-sm-4 col-xs-8 col-xs-offset-2 col-link-item ">
-        <a class="" href="<?php 
-          #echo '/?action=ext&cat=wordpress';
-          echo '//blog.sunsmell.cc/'; # ?>">
-          <div class="">  
-            <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" class="img-thumbnail">
-            <h2>My Blog</h2>
-            <p>my blog powered by wordpress</p>
-          </div>
-        </a>
-      </div>
+      <?php endfor; ?>
+      
     </div>
     <?php if(DEBUG_MODE):?>
     <div class="alert alert-warning">
