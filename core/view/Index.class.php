@@ -27,6 +27,19 @@ class Index extends Page{
     //   'browser' => $_SERVER['HTTP_USER_AGENT'],
     // );
     // $viewinfo->view_add($info); 
+    $this->view['title'] = 'sunmell的主页';
+    $this->view['block'] = array(
+      '1' => array(
+        'href'        => '//blog.sunsmell.cc',
+        'title'       => 'My Blog',
+        'description' => 'my blog powered by wordpress',
+      ),
+    );
+    $this->view['carousel-item'] = array(
+      array('src' => '/static/img/sword_art_online_4.jpg', 'description' => 'sword art online', 'active' => true),
+      array('src' => '/static/img/sword_art_online_3.jpg', 'description' => 'sword art online'),
+      array('src' => '/static/img/sword_art_online_2.jpg', 'description' => 'sword art online'),
+      );
     $this->render();
   }
 

@@ -1,12 +1,6 @@
 html{
-width:100%;
-/*overflow-x:hidden;*/
 }
-body {
-  margin: auto;
-  padding: 0;
-  width: inherit;
-}
+
 
 #carousel-index {
   margin-bottom: 20px;
@@ -45,15 +39,18 @@ body {
   #carousel-index {
     margin-bottom: 60px;
   }
+  .col-link-item img {
+    width: 120px;
+    height: 120px;
+  }
 }
 
-
+/*very large*/
 @media (min-width: 1200px) {
   #carousel-index {
     margin-bottom: 80px;
   }
-  .col-link-item img {
-    width: 120px;
-    height: 120px;
+  .carousel-inner.active {
+    margin-left: auto;
   }
 }

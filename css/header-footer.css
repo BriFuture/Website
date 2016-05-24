@@ -1,6 +1,6 @@
 #header {
   z-index: 100;
-  min-width: 400px;
+  /*min-width: 400px;*/
   height: 70px;
   background: url('/static/img/header-bg2.jpg') repeat ;
   position: relative;
@@ -60,7 +60,7 @@ div.head-mask {
   vertical-align: middle;
 }
 
-
+/*footer.css*/
 #footer {
   bottom: -40px;
   width: 100%;

@@ -9,11 +9,11 @@ if(!defined('VERSION')) {
 <head>
   <meta  charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=0">
+  <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	<meta http-equiv="Content-Type" content="text/html;" />
 	<meta name="description" content="主页" />
   <meta name="renderer" content="webkit">
-  <title>sunsmell主页</title>
+  <title><?php echo $this->view['title'] ?></title>
   <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
   <!-- jQuery文件-->
   <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
@@ -29,32 +29,22 @@ if(!defined('VERSION')) {
   <?php include $this->view['header']; ?>
   <!-- <div class="jumbotron"> -->
   <div id="carousel-index" class="carousel slide" data-ride="carousel">
-  <!-- Indicators -->
-  <ol class="carousel-indicators">
-    <li data-target="#carousel-index" data-slide-to="0" class="active"></li>
-    <li data-target="#carousel-index" data-slide-to="1"></li>
-    <li data-target="#carousel-index" data-slide-to="2"></li>
-  </ol>
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+      <li data-target="#carousel-index" data-slide-to="0" class="active"></li>
+      <!-- <li data-target="#carousel-index" data-slide-to="1"></li>
+      <li data-target="#carousel-index" data-slide-to="2"></li> -->
+    </ol>
     <!-- Wrapper for slides -->
     <div class="carousel-inner" role="listbox">
-      <div class="item active">
-        <img src="/static/img/sword_art_online_4.jpg" alt="图片1">
+      <?php foreach ($this->view['carousel-item'] as $item) : ?>
+      <div class="item <?php if(isset($item['active']) && $item['active'] == 1) echo 'active'; ?>">
+        <img src="<?php echo $item['src'] ?>" alt="图片1">
         <div class="carousel-caption">
-          sword_art_online
+          <?php echo $item['description'] ?>
         </div>
       </div>
-      <div class="item">
-        <img src="/static/img/sword_art_online_2.jpg" alt="图片2">
-        <div class="carousel-caption">
-          sword_art_online
-        </div>
-      </div>
-      <div class="item">
-        <img src="/static/img/sword_art_online_3.jpg" alt="图片3">
-        <div class="carousel-caption">
-          sword_art_online
-        </div>
-      </div>
+      <?php endforeach; ?>
     </div>
     <!-- Controls -->
     <a class="left carousel-control" href="#carousel-index" role="button" data-slide="prev">
@@ -68,20 +58,17 @@ if(!defined('VERSION')) {
   </div>
   <div class="container-fluid marketing">
     <div class="row">
-      <?php  for($i=0; $i<3; $i++):?>
+      <?php  foreach($this->view['block'] as $block): ?>
       <div class="col-sm-4 col-xs-6 col-xs-offset-3 col-link-item ">
-        <a class="" href="<?php 
-          #echo '/?action=ext&cat=wordpress';
-          echo '//blog.sunsmell.cc/'; # ?>">
+        <a class="" href="<?php echo $block['href'];?>">
           <div class="">  
             <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" class="img-thumbnail">
-            <h2>My Blog</h2>
-            <p>my blog powered by wordpress</p>
+            <h2><?php echo $block['title']; ?></h2>
+            <p><?php echo $block['description']; ?></p>
           </div>
         </a>
       </div>
-      <?php endfor; ?>
-      
+      <?php endforeach; ?>
     </div>
     <?php if(DEBUG_MODE):?>
     <div class="alert alert-warning">
