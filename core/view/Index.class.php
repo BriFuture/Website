@@ -50,16 +50,16 @@ class Index extends Page{
     );
     $this->view['carousel-item'] = array(
       array(
-        'src' => '/static/img/sword_art_online_4.jpg', 
+        'src'         => '/static/img/sword_art_online_4.jpg', 
         'description' => 'sword art online', 
-        'active' => true,
+        'active'      => true,
         ),
       array(
-        'src' => '/static/img/sword_art_online_3.jpg', 
+        'src'         => '/static/img/sword_art_online_3.jpg', 
         'description' => 'sword art online', 
         ),
       array(
-        'src' => '/static/img/sword_art_online_2.jpg', 
+        'src'         => '/static/img/sword_art_online_2.jpg', 
         'description' => 'sword art online', 
         ),
       );

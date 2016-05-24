@@ -39,14 +39,18 @@
     width: 120px;
     height: 120px;
   }
+  .row {
+    margin-left: auto;
+  }
 }
 
-/*very large*/
+/*very large 
+do not consider now*/
 @media (min-width: 1200px) {
-  #carousel-index {
+  /*#carousel-index {
     margin-bottom: 80px;
   }
   .carousel-inner.active {
     margin-left: auto;
-  }
+  }*/
 }
