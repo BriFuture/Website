@@ -52,8 +52,12 @@ class Db implements DbImpl{
     // $this->allow_connect = $connect;
   }
   public function __destruct() {
-    self::disconnect();
+    $this->disconnect();
   }
+
+  /**
+   * 获取Db实例
+   */
   public static function getInstance() {
     if(is_null(self::$db)) {
       self::$db = new Db();
@@ -68,11 +72,11 @@ class Db implements DbImpl{
   private function connect($fail_handle) {
     if($this->persistent)
     {
-      $db = new mysqli('P:'.HOST, USER, PASSWD, DATABASE);
+      $db = new Mysqli('P:'.HOST, USER, PASSWD, DATABASE);
     }
     else
     {
-      $db = new mysqli(HOST, USER, PASSWD, DATABASE);
+      $db = new Mysqli(HOST, USER, PASSWD, DATABASE);
     }
     if($db->connect_error)
     {
@@ -83,7 +87,8 @@ class Db implements DbImpl{
       $this->fail_error('set_charset', $db->connect_errno, $db->connect_error);
     // echo 'Success... '.$mysqli->$host_info.'\n';
     //==============
-    Base::report_process('db_connected');
+    $base = Factory::getObject('Base');
+    $base->report_process('db_connected');
     $this->connection = $db;
   }
 
@@ -109,14 +114,15 @@ class Db implements DbImpl{
     else
     {
       $errors = 'Database '.htmlspecialchars($type.' errno '.$errno).'<p>'.nl2br(htmlspecialchars($error."\n".$query)).'</p>';
-      Base::fatal_error($errors, '数据库错误');
+      $base   = Factory::getObject('Base');
+      $base->fatal_error($errors, '数据库错误');
       // exit();
     }
   }
 
   /**
    * 返回数据库连接
-   * @return mysqli
+   * @return mysqli对象
   */
   public function connection() {
     //如果没有实例化mysqli
@@ -129,6 +135,9 @@ class Db implements DbImpl{
     return $this->connection;
   }
 
+  /**
+   * 关闭连接
+   */
   public function disconnect() {
     //如果已经建立连接，关闭
     if($this->connection instanceof mysqli) 
@@ -140,7 +149,7 @@ class Db implements DbImpl{
           Base::fatal_error('Database disconnect failed');
       }
     }
-    //关闭连接
+    //指向空对象
     $this->connection = null;
   }
 
@@ -202,6 +211,9 @@ class Db implements DbImpl{
     return $result;
   }
 
+  /**
+   * 用数据库对象mysqli转义字符
+   */
   public function escape_string($string) {
     return $this->connection()->real_escape_string($string);
   }
@@ -209,7 +221,10 @@ class Db implements DbImpl{
   /**
    * 返回为mysql转义的参数，如果$alwaysquote 为true或者不是数字，就在参数两边添加引号
    * 如果参数是数组,返回一组用逗号隔开的转义元素
-   * @param arraybrackets 是否使用括号
+   * @param  $argument  查询语句
+   * @param  $alwaysquote  加上引号
+   * @param  $arraybrackets 是否使用括号
+   * @return  返回转义后的查询语句
    */
   public function argument_to_mysql($argument, $alwaysquote, $arraybracket=false) {
     if(is_array($argument))   //如果是数组的话
@@ -218,7 +233,7 @@ class Db implements DbImpl{
 
       foreach ($argument as $subargument) {
         //将每个部分都转换成mysql参数
-        $parts[] = argument_to_mysql($subargument, $alwaysquote, true);
+        $parts[] = $this->argument_to_mysql($subargument, $alwaysquote, true);
         //使用括号
         if($arraybracket)
           $result = '('.implode(',', $parts).')';
@@ -231,11 +246,11 @@ class Db implements DbImpl{
       //不是数字，添加单引号
       if($alwaysquote || !is_numeric($argument))
       {
-        $result = "'".escape_string($argumet)."'";
+        $result = "'".$this->escape_string($argument)."'";
       }
       else
       {
-        $result = escape_string($argument);
+        $result = $this->escape_string($argument);
       }
     }
     else
@@ -250,8 +265,10 @@ class Db implements DbImpl{
 
   /**
    * 将占位符替代为相应的值，封装了mysqli_to_mysql()并转为MYSQL语句
-   * $替换成相应的字符串
-   * #替换成数字
+   * $替换成相应的字符串，加上引号
+   * #替换成数字，并且不加引号
+   * @param  $query  查询语句
+   * @param  $arguments  需要替换的参数
    */
   public function substitude($query, $arguments) {
     if(!is_array($arguments))

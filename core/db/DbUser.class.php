@@ -22,7 +22,7 @@ class DbUser {
   private $error;
 
   public function __construct() {
-    $this->db = Db::newInstance();
+    $this->db = Db::getInstance();
   }
 
   /**

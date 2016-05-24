@@ -18,7 +18,7 @@ class DbText {
   private $table_name = 'text';
 
   public function __construct() {
-    $this->db = Db::newInstance();
+    $this->db = Db::getInstance();
   }
 
 

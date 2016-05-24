@@ -19,7 +19,7 @@ class DbSelects {
   private $table_name = "selects";
 
   function __construct() {
-    $this->db = Db::newInstance();
+    $this->db = Db::getInstance();
   }
 
   public function selct_with_pending() {

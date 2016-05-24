@@ -17,7 +17,7 @@ class DbCookies {
   private $table_name = 'options';
 
   public function __construct() {
-    $this->db = Db::newInstance();
+    $this->db = Db::getInstance();
   }
   
   /**

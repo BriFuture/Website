@@ -19,7 +19,7 @@ class Db_viewinfo {
   private $table_name= 'view_info';
 
   function __construct() {
-    $this->db = Db::newInstance();
+    $this->db = Db::getInstance();
     /*if($this->mysqli instanceof mysqli)
     {
       echo "connected!!!";

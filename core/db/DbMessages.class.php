@@ -17,7 +17,7 @@ class DbMessages {
   private $table_name = 'messages';
 
   function __construct() {
-    $this->db = Db::newInstance();
+    $this->db = Db::getInstance();
   }
 
   /**

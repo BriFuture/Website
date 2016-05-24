@@ -18,7 +18,7 @@ class DbBlock {
   private $table_name = 'block';
 
   public function __construct() {
-    $this->db = Db::newInstance();
+    $this->db = Db::getInstance();
   }
   
 }

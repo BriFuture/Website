@@ -12,23 +12,50 @@ if(!defined('VERSION'))
 }
 
 class DbOptions {
-  const COLUMNS=['title', 'content'];
+  const COLUMNS=['id', 'name', 'value'];
   /**
    * 数据库对象
    */
   private $db;
   private $table_name = 'options';
+  private $options;
 
   public function __construct() {
-    $this->db = Db::newInstance();
+    $this->db = Db::getInstance();
   }
 
   /**
-   * 设置数据库中的option $name 为$value
+   * 添加数据库中的option 选项 
+   *  $name 为$value
+   * @param  $name  option 的名称
+   * @param  $value  要设置的值
+   * @param  $autoload  bool  是否要自动加载
+   * @return  返回最后插入的id值
+   */
+  public function create_option($name, $value, $autoload) {
+    // 不使用REPLACE 因为REPLACE会将id自动+1
+    // $this->db->query_sub('REPLACE options (name, value) VALUES ($, $)', $name, $value);
+    $query = 'INSERT INTO options (name, value, autoload) VALUES ($, $, $)';
+    $this->db->query_sub($query, $name, $value, ($autoload ? 'yes', 'no') );
+    return $this->db->last_insert_id();
+  }
+
+  /**
+   * 读取数据库中的option的值
    * @param  $name  option 的名称
    * @param  $value  要设置的值
    */
-  public function set_option($name, $value) {
-    $this->db->query_sub('REPLACE options (title, content) VALUES ($, $)', $name, $value);
+  public function get_option($name, $value) {
+    
+  }
+
+  /**
+   * 读取数据库中的options的所有值
+   * @param  $name  option 的名称
+   * @param  $value  要设置的值
+   */
+  public function get_all_option() {
+    $result = $this->db->query_sub('');
+    $base = Factory::getObject('Base');
   }
 }

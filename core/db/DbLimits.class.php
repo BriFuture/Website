@@ -16,7 +16,7 @@ class DbLimits {
   private $table_name = 'limits';
 
   public function __construct() {
-    $this->db = Db::newInstance();
+    $this->db = Db::getInstance();
   }
 
   /**

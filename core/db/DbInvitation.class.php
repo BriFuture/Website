@@ -17,7 +17,7 @@ class DbInvitation {
   private $table_name = 'invitation';
 
   public function __construct() {
-    $this->db = Db::newInstance();
+    $this->db = Db::getInstance();
   }
 
   public function someCode() {

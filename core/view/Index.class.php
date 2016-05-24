@@ -47,6 +47,12 @@ class Index extends Page{
         'description' => 'my blog powered by wordpress',
         'img'         => 'data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==',
       ),
+      array(
+        'href'        => '//blog.sunsmell.cc',
+        'title'       => 'My Blog',
+        'description' => 'my blog powered by wordpress',
+        'img'         => 'data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==',
+      ),
     );
     $this->view['carousel-item'] = array(
       array(
