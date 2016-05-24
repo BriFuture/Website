@@ -5,11 +5,13 @@ if(!defined('VERSION')) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="zh-CN" PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
+<html lang="zh-CN">
 <head>
   <meta  charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <!-- <meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1, width=device-width"> -->
+  <!-- <meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1" > -->
 	<meta http-equiv="Content-Type" content="text/html;" />
 	<meta name="description" content="主页" />
   <meta name="renderer" content="webkit">
@@ -62,7 +64,7 @@ if(!defined('VERSION')) {
       <div class="col-sm-4 col-xs-6 col-xs-offset-3 col-link-item ">
         <a class="" href="<?php echo $block['href'];?>">
           <div class="">  
-            <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" class="img-thumbnail">
+            <img src="<?php echo $block['img']; ?>" class="img-thumbnail">
             <h2><?php echo $block['title']; ?></h2>
             <p><?php echo $block['description']; ?></p>
           </div>

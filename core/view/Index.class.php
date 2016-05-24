@@ -17,7 +17,7 @@ class Index extends Page{
    * @param  $msg  额外的信息 
    */
   public function view_index($msg=null) {
-   // require_once CORE_PATH.'db/Db.class.php';
+    // require_once CORE_PATH.'db/Db.class.php';
     // require_once CORE_PATH.'const.php';
     // $security = Security::getInstance();
     // $viewinfo = new Db_viewinfo();
@@ -29,16 +29,39 @@ class Index extends Page{
     // $viewinfo->view_add($info); 
     $this->view['title'] = 'sunmell的主页';
     $this->view['block'] = array(
-      '1' => array(
+      array(
         'href'        => '//blog.sunsmell.cc',
         'title'       => 'My Blog',
         'description' => 'my blog powered by wordpress',
+        'img'         => 'data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==', 
+      ),
+      array(
+        'href'        => '//blog.sunsmell.cc',
+        'title'       => 'My Blog',
+        'description' => 'my blog powered by wordpress',
+        'img'         => 'data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==',
+      ),
+      array(
+        'href'        => '//blog.sunsmell.cc',
+        'title'       => 'My Blog',
+        'description' => 'my blog powered by wordpress',
+        'img'         => 'data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==',
       ),
     );
     $this->view['carousel-item'] = array(
-      array('src' => '/static/img/sword_art_online_4.jpg', 'description' => 'sword art online', 'active' => true),
-      array('src' => '/static/img/sword_art_online_3.jpg', 'description' => 'sword art online'),
-      array('src' => '/static/img/sword_art_online_2.jpg', 'description' => 'sword art online'),
+      array(
+        'src' => '/static/img/sword_art_online_4.jpg', 
+        'description' => 'sword art online', 
+        'active' => true,
+        ),
+      array(
+        'src' => '/static/img/sword_art_online_3.jpg', 
+        'description' => 'sword art online', 
+        ),
+      array(
+        'src' => '/static/img/sword_art_online_2.jpg', 
+        'description' => 'sword art online', 
+        ),
       );
     $this->render();
   }
