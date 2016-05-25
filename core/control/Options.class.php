@@ -19,61 +19,65 @@ class Options {
   const PERMIT_ADMINS		= 50;
   const PERMIT_SUPERS 	= 0;
 
+  public $options_cache;
+
+  public $options_loaded;
+
   /**
    * 通过$names获取设置
    * @param  $names  名称
    * @return  返回names对应的值
    */
   public function get_option($names) {
-  	global $options_cache, $options_loaded;
-
   	//如果options还没有缓存，将options从数据库中取出
-  	if(!$options_loaded)
+  	if(!$this->options_loaded)
   		$this->preload_options();
 
-  	if(!$options_cache)
+  	if(!$this->options_cache)
   	{
   		$this->load_options_result(array());
   	}
   }
 
   /**
-   * 预加载
+   * 预加载option
    */
   public function preload_options() {
-  	global $options_loaded;
-
-  	if(!isset($options_loaded) || !$options_loaded) 
+  	if(!isset($this->options_loaded) || !$this->options_loaded)  //没有加载option
   	{
-  		$selectspecs = array(
+  		$select_specs = array(
   			'options'	=> array(
   				'columns'    => array('title', 'content'),
   				'source'	 	 => 'options',
   				'arraykey' 	 => 'title',
   				'arrayvalue' => 'content',
   				),
-  			'time'  	=> array(
+  			'time'  	=> array( //读取数据库时间
   				'columns'		 => array('title' => "'db_time'", 'content' => 'UNIX_TIMESTAMP(NOW())'),
   				'arraykey'   => 'title',
   				'arrayvalue' => 'content',
   				),
   		);
-
-  		$this->load_options_results($this->db->multi_select($selectspecs));
+      $db = Db::getInstance();
+  		$this->load_options_results($db->multi_select($select_specs));
   	}
   }
 	
 	/**
    * 加载结果
+   * 将所有结果加载到cache中
+   * @param  $results  结果集
    */  
   public function load_options_results($results) {
-  	global $options_cache, $options_loaded;
-
   	foreach($results as $result)
+    {
   		foreach($result as $name => $value)
-  			$options_cache[$name] = $value;
+      {
+  			$this->options_cache[$name] = $value;
+      }
+    }
 
-  	$options_loaded=true;
+  	$this->options_loaded=true;
   }
 	
 	/**
@@ -82,8 +86,10 @@ class Options {
    * @param  新的值
    */
   public function set_option($name, $value, $todatabase=true) {
-  	global $options_cache;
   	if($todatabase && isset($value))
+    {
+
+    }
 
   }
 	
@@ -93,11 +99,13 @@ class Options {
    */
   public function reset_option($names) {
   	foreach($names as $name)
+    {
   		$this->set_option($name, $this->default_option($name));
+    }
   }
 	
 	/**
-   * 默认的选项
+   * 返回默认的选项，在数据库中option没有相应的值时或者没有option时新建
    * @param  $name
    */
   public function default_option($name) {
@@ -120,11 +128,4 @@ class Options {
   		}
   }
 	
-	/**
-   * 
-   * @param  $name
-   */
-  public function get_permit_options($name) {
-  	$permits = array('permit_view','permit_post');
-  }
 }

@@ -53,13 +53,14 @@ class DbOptions {
    * 读取数据库中的options的所有值
    * @param  $name  option 的名称
    * @param  $value  要设置的值
+   * @return  数组
    */
   public function get_all_options() {
     $query = 'SELECT `id`, `name`, `value`, `autoload` FROM `options`';
     $result = $this->db->query($query);
 
-    $res = $this->db->get_all_assoc($result, 'name', 'value');
-    print_r($res);
-    // $base = Factory::getObject('Base');
+    $this->options = $this->db->get_all_assoc($result);
+    // print_r($res);
+    return $this->options;
   }
 }

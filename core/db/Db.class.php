@@ -14,7 +14,7 @@ if(!defined('VERSION'))
 }
 //读取配置
 require_once CORE_PATH.'db_config.php';
-require_once CONTROL_PATH.'Base.class.php';
+
 //实现接口
 require_once DB_PATH.'Db.impl.php';
 
@@ -87,7 +87,7 @@ class Db implements DbImpl{
       $this->fail_error('set_charset', $db->connect_errno, $db->connect_error);
     // echo 'Success... '.$mysqli->$host_info.'\n';
     //==============
-    $base = Factory::getObject('Base');
+    $base = new Base();
     $base->report_process('db_connected');
     $this->connection = $db;
   }
@@ -114,7 +114,7 @@ class Db implements DbImpl{
     else
     {
       $errors = 'Database '.htmlspecialchars($type.' errno '.$errno).'<p>'.nl2br(htmlspecialchars($error."\n".$query)).'</p>';
-      $base   = Factory::getObject('Base');
+      $base   = new Base();
       $base->fatal_error($errors, '数据库错误');
       // exit();
     }
@@ -131,7 +131,7 @@ class Db implements DbImpl{
       $this->connect(null);
       if(!($this->connection instanceof mysqli))
       {
-        $base = Factory::getObject('Base');
+        $base = new Base();
         $base->fatal_error('Failed to connect to database');
       }
     }
@@ -145,12 +145,12 @@ class Db implements DbImpl{
     //如果已经建立连接，关闭
     if($this->connection instanceof mysqli) 
     {
-      $base = Factory::getObject('Base');
+      $base = new Base();
       $base->report_process('db_disconnect');
       if(!$this->persistent)
       {
         if(!$this->connection->close())
-          $base = Factory::getObject('Base');
+          $base = new Base();
           $base->fatal_error('Database disconnect failed');
       }
     }
@@ -302,7 +302,7 @@ class Db implements DbImpl{
       //如果找到的位置不是数字，报错
       if(!is_numeric($position))
       {
-        $base = Factory::getObject('Base');
+        $base = new Base();
         $base->fatal_error('Insufficient parameters in query: '. $query);
       }
       //换成mysql语句
@@ -327,14 +327,23 @@ class Db implements DbImpl{
     return $this->query_raw($this->substitude($query, array_slice($funcargs, 1)));
   }
 
+  /**
+   * 封装mysqli对象的last_insert_id
+   */
   public function last_insert_id() {
     return $this->connection()->last_insert_id;
   }
 
+  /**
+   * 封装mysqli对象的affected_rows
+   */
   public function affected_rows() {
     return $this->connection()->affected_rows;
   }
 
+  /**
+   * 返回结果集的行数
+   */
   public static function num_rows($result) {
     if($result instanceof mysqli)
       return $result->num_rows;
@@ -352,127 +361,167 @@ class Db implements DbImpl{
 
   /**
    * 取出指定的列
-   * 自动构造mysql语句，并封装query_raw查询。
-   * 不再需要每个类都写mysql查询selcet语句了，而是用数组的形式给出需要查询的列以及列的别名（key）
+   * 自动构造mysql查询语句，并封装query_raw查询。
+   * 不再需要每个类都写mysql查询selcet语句了，
+   * 而是用数组的形式给出需要查询的列以及列的别名（key）
+   * 可根据页面逻辑需要更改$select_spec
+   * @param  $select_spec  数组
+   *  可能的键有： 
+   *    columns    列名
+   *    arguments  参数
+   *    limit      条数限制
+   *    source     来源，也就是表名
+   *    array_key  指定返回的结果集的键
    */
-  public function single_select($selectspec) {
+  public function single_select($select_spec) {
     //构造query语句
     $query = 'SELECT ';
-    foreach ($selectspec['columns'] as $columnas => $columnfrom) 
-      $query .= $columnfrom.(is_int($columnas) ? '' :(' AS '.$columnas)).', ';
+    //column_as 是将结果集中的列变成相应的值别名，column_from是数据库中存在的列
+    foreach ($select_spec['columns'] as $column_as => $column_from) 
+    {
+      $query .= $column_from.(is_int($column_as) ? '' :(' AS '.$column_as)).', ';
+    }
     // print_r($query);
 
     //添加条数限制
     $limit='';
-    if(!is_null(@$selectspec['limit'])) 
+    if(!is_null(@$select_spec['limit'])) 
     {
-      if(is_array($selectspec['limit']) && is_numeric($selectspec['limit'][0]) && is_numeric($selectspec['limit'][1]))
-        $limit = ' LIMIT '.$selectspec['limit'][0].','.$selectspec['limit'][1];
-      elseif(is_numeric($selectspec['limit']))
-        $limit = ' LIMIT '.$selectspec['limit'];
+      if(is_array($select_spec['limit']) && is_numeric($select_spec['limit'][0]) && is_numeric($select_spec['limit'][1]))
+        $limit = ' LIMIT '.$select_spec['limit'][0].','.$select_spec['limit'][1];
+      elseif(is_numeric($select_spec['limit']))
+        $limit = ' LIMIT '.$select_spec['limit'];
     }
     // echo 'limit: '.$limit;
 
     //转义并转化为MYSQL语句,去掉最后的', ' 并且加上 FROM 语句 
     $mysqlstr = $this->substitude(
       substr($query, 0, -2).
-      (strlen(@$selectspec['source']) ? (' FROM '.$selectspec['source']) : '').$limit
+      (strlen(@$select_spec['source']) ? (' FROM '.$select_spec['source']) : '').$limit
       ,
-      @$selectspec['arguments']
+      @$select_spec['arguments']
     );
 
-    // echo '<br>mysqlstr: ';
-    // print_r($mysqlstr);
-
     //得到原始的结果
-    $resultraw = $this->query_raw($mysqlstr);
-    // echo '<br>';
-    // print_r($resultraw);
+    $result_raw = $this->query_raw($mysqlstr);
 
-    //数据
-    $results = $this->get_all_assoc($resultraw, @$selectspec['arraykey']);
-    // echo '<br>';
-    // print_r($results);
+    //数据结果
+    $results = $this->get_all_assoc($result_raw, @$select_spec['arraykey']);
     return $results;
   }
 
   /**
-   * data: 04.21
-   * 
-   * 还不清楚如何使用
+   * 关联查询
+   * 自动构造mysql查询语句,通过循环single_select()函数查询
+   * @param  $selectspecs  嵌套数组
+   *  可能的键有：
+   *    outcolumns
+   *    autocolumn
+   *  包含 $selectspec数组
    */
-  public function multi_select($selectspecs) {
+  public function multi_select($select_specs) {
     //没有参数
-    if(!count($selectspecs))
+    if(!count($select_specs))
     {
       return array();
     }
-    //参数个数小于1
-    if(count($selectspecs) <= 1)
+    //参数个数小于或者等于1，也就是查询一个表或者0个表
+    if(count($select_specs) <= 1)
     {
-      $outresults = array();
+      $out_results = array();
 
-      foreach($selectspecs as $skey => $selectspec) {
-        $outresults[$skey] = single_select($selectspec); 
+      foreach($select_specs as $skey => $select_spec) {
+        $out_results[$skey] = single_select($select_spec); 
       }
 
-      return $outresults;
+      return $out_results;
     }
+
+
     //循环每一个参数
-    foreach($selectspecs as $skey => $selectspec) {
-      $selectspecs[$skey]['outcolumns']=array();
-      $selectspecs[$skey]['autocolumn']=array();
-      //指定列
-      foreach ($selectspec['columns'] as $columns => $columnfrom) {
-        if(is_int($columns)) 
+    foreach($select_specs as $skey => $select_spec) {
+      //输出的列
+      $select_specs[$skey]['outcolumns']=array();
+      $select_specs[$skey]['autocolumn']=array();
+      //循环数组中指定的列
+      foreach ($select_spec['columns'] as $column_as => $column_from) {
+        //如果是数字的话，表示没有指定别名
+        if(is_int($column_as)) 
         {
-          $periodpos = strpos($columnfrom, ',');
-          $columnas = is_numeric($periodpos) ? substr($columnfrom, $periodpos+1): $columnfrom;
-          $selectspecs[$selectspec]['autocolumn'][$columnas] = true;
+          //如果用逗号隔开$column_from，那么取逗号后面的值作为$column_as，逗号不能多于两个
+          $periodpos = strpos($column_from, ',');
+          $column_as = is_numeric($periodpos) ? substr($column_from, $periodpos+1): $column_from;
+          $select_specs[$select_spec]['autocolumn'][$column_as] = true;
         }
 
-        if(isset($selectspecs[$skey]['outcolumns'][$columnas]))
+        if(isset($select_specs[$skey]['outcolumns'][$column_as]))  //重复的列名
         {
-          $base = Factory::getObject('Base');
+          $base = new Base();
           $base->fatal_error('Duplicate column name in multi_select()');
         }
 
-        $selectspecs[$skey]['outcolumns'][$columnas] = $columnfrom;
+        //输出列名
+        $select_specs[$skey]['outcolumns'][$column_as] = $column_from;
       }
 
-      if(isset($selectspec['arraykey']))
-        if(!isset($selectspecs[$skey]['outcolumns'][$selectspec['arraykey']]))
-          $base = Factory::getObject('Base');
+      if(isset($select_spec['arraykey']))
+      {
+        //设置了arraykey作为键名 ，但是在输出的列名中， arraykey对应的值并没有设置
+        if(!isset($select_specs[$skey]['outcolumns'][$select_spec['arraykey']]))
+        {
+          $base = new Base();
           $base->fatal_error('Used arraykey not in columns in multi_select()');
-
-      if(isset($selectspec['arrayvalue']))
-        if(!isset($selectspecs[$skey]['outcolumns'][$selectspec['arrayvalue']]))
-          $base = Factory::getObject('Base');
-          $base->fatal_error('Used arrayvalue not in columns in multi_select()');
-    }
-    //
-    $outcolumns=array();
-    foreach($selectspecs as $selectspec)
-      $outcolumns=array_unique(array_merge($outcolumns,array_keys($selectspec['outcolumns'])));
-    //query语句
-    $query='';
-    foreach($selectspecs as $selectkey => $selectspec) {
-      $subquery="(SELECT '".escape_string($selectkey)."'".(empty($query) ? 'AS selectkey' : '');
-      foreach ($$outcolumns as $selectkey => $selectspec) {
-        $subquery=', '.(isset($selectspec['outcolumns'][$columnas])?$selectspec['outcolumns'] : 'NULL');
-        if(empty($query) && !isset($selectspec['autocolumn'][$columnas]))
-          $subquery.=' AS '.$columns;
+        }
       }
 
-      if(strlen(@$selectspec['source']))
-        $subquery.=' FROM '.$selectspec['source'];
-
-      $subquery.=')';
-      if(strlen($query))
-        $query.=' UNION ALL ';
-
-      $query.=substitude($subquery, @$selectspec['arguments']);
+      if(isset($select_spec['arrayvalue']))
+      {
+        //设置了arrayvalue 只显示某一列的值，但是在输出的列中， arrayvalue对应的值并没有设置
+        if(!isset($select_specs[$skey]['outcolumns'][$select_spec['arrayvalue']]))
+        {
+          $base = new Base();
+          $base->fatal_error('Used arrayvalue not in columns in multi_select()');
+        }
+      }
     }
+    //输出的结果列
+    $outcolumns=array();
+    foreach($select_specs as $select_spec)  //去掉数组重复的部分
+    {
+      $outcolumns=array_unique(array_merge($outcolumns,array_keys($select_spec['outcolumns'])));
+    }
+    //构造query语句
+    $query_str='';
+    foreach($select_specs as $select_key => $select_spec) {
+      $query_str="(SELECT '".escape_string($select_key)."'".(empty($query_str) ? 'AS select_key' : '');
+
+      foreach ($$outcolumns as $select_key => $select_spec) {
+        $query_str=', '.(isset($select_spec['outcolumns'][$column_as])?$select_spec['outcolumns'] : 'NULL');
+        if(empty($query_str) && !isset($select_spec['autocolumn'][$column_as]))
+          $query_str.=' AS '.$columns;
+      }
+
+      if(strlen(@$select_spec['source']))
+      {
+        $query_str.=' FROM '.$select_spec['source'];
+      }
+
+      $query_str.=')';
+
+      //防止出现单独的 UNION ALL
+      if(strlen($query_str))
+      {
+        $query_str.=' UNION ALL '; //关联查询
+      }
+
+      $query_str.=$this->substitude($query_str, @$select_spec['arguments']);
+    }
+
+    $result_raw = $this->query_raw($query_str);
+
+    $results = $this->get_all_assoc($result_raw);
+
+    return $results;
   }
    /**
     * @param $result  mysqli result
@@ -486,7 +535,7 @@ class Db implements DbImpl{
   static function get_all_assoc($result, $key=null, $value=null) {
     if(!($result instanceof mysqli_result))
     {
-      $base = Factory::getObject('Base');
+      $base = new Base();
       $base->fatal_error('Reading assocs from invalid result');
       return;
     }
@@ -517,7 +566,7 @@ class Db implements DbImpl{
   static function get_one_assoc($result, $allowempty=false) {
     if(!($result instanceof mysqli_result))
     {
-      $base = Factory::getObject('Base');
+      $base = new Base();
       $base->fatal_error('Reading one assoc from invalid result');
       return;
     }  
@@ -534,7 +583,7 @@ class Db implements DbImpl{
     }
     else
     {
-      $base = Factory::getObject('Base');
+      $base = new Base();
       $base->fatal_error('Reading one assoc from empty result');
     }
   }
@@ -542,7 +591,7 @@ class Db implements DbImpl{
   static function get_all_value($result) {
     if(!($result instanceof mysqli_result)) 
     {
-      $base = Factory::getObject('Base');
+      $base = new Base();
       $base->fatal_error('Reading values from invalid result');
       return;
     }
@@ -558,7 +607,7 @@ class Db implements DbImpl{
   static function get_one_value($result, $allowempty=false) {
     if(!($result instanceof mysqli_result)) 
     {
-      $base = Factory::getObject('Base');
+      $base = new Base();
       $base->fatal_error('Reading one value from invalid result');
       return;
     }
@@ -574,7 +623,7 @@ class Db implements DbImpl{
     }
     else
     {
-      $base = Factory::getObject('Base');
+      $base = new Base();
       $base->fatal_error('Reading one value from empty results');
     }
   }

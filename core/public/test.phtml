@@ -3,5 +3,9 @@
     header('Location:/');
     exit();
   }
-$options = new DbOptions();
-$options->get_all_options();
+// $options = new DbOptions();
+
+// print_r($options->get_all_options());
+$column_from = 'st,12,32';
+$periodpos = strpos($column_from, ',');
+echo substr($column_from, $periodpos+1);
