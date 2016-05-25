@@ -36,7 +36,7 @@ class Configure {
 
     if(!file_exists($this->config_file))
     {
-      $base = Factory::getBase();
+      $base = new Base();
       $base->fatal_error(500);
       // $base->fatal_error($this->config_file, 'config file not found');
     }

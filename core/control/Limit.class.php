@@ -21,11 +21,11 @@ class Limit {
    */
   public function user_limit_remaining($action) {
     //
-    $dbLimits = Factory::getDbLimits();
-    $dbUser   = Factory::getDbUser();
-    $base     = Factory::getBase();
-    $user_limits = $dbLimits->get_limit($dbUser->get_login_userid, $base->get_remote_ip(), $aciton);
-    $ip_limits   = $dbLimits->get_limit($dbUser->get_login_userid, $base->get_remote_ip(), $aciton);
+    $dbLimits = Factory::getObject('DbLimits');
+    $dbUsers   = Factory::getObject('DbUsers');
+    $base     = new Base();
+    $user_limits = $dbLimits->get_limit($dbUsers->get_login_userid, $base->get_remote_ip(), $aciton);
+    $ip_limits   = $dbLimits->get_limit($dbUsers->get_login_userid, $base->get_remote_ip(), $aciton);
 
     return $this->calc_limits_remaining($action, $user_limits, $ip_limits);
   }
@@ -44,11 +44,11 @@ class Limit {
       case self::LIMIT_LOGIN:
         break;
       default:
-        $base = Factory::getBase();
+        $base = new Base();
         $base->fatal_error('未知的限制代码，代码为：'.$action);
         break;
     }
-    $options = Factory::getOptions();
+    $options = Factory::getObject('Options');
     $period = (int) ($options->get_option('db_time') / 3600);
 
     return max(0, 
@@ -65,10 +65,10 @@ class Limit {
    *      true  被屏蔽  false  没有被屏蔽
    */
   public function is_ip_blocked() {
-    $options = Factory::getOptions();
+    $options = Factory::getObject('Options');
     $block_ip_clauses = $this->block_ips_explode($options->get_option('block_ips_write'));
 
-    $base = Factory::getBase();
+    $base = new Base();
     foreach($block_ip_clauses as $block_ip_clause) {
       //检查是否被屏蔽
       if($this->block_ip_match($base->get_remote_ip(), $block_ip_clause))
@@ -127,10 +127,10 @@ class Limit {
    * @param  $action  行为
    */
   public function limits_increase($userid, $action) {
-    $options = Factory::getOptions();
+    $options = Factory::getObject('Options');
     $period = (int) ($options->get_option('db_time') / 3600);
 
-    $dbLimits = Factory::getDbLimits();
+    $dbLimits = Factory::getObject('DbLimits');
 
     //如果用户已经登陆，记录登陆的id
     if(isset($userid))
@@ -138,7 +138,7 @@ class Limit {
       $dbLimits->add_user($userid, $action, $period, 1);
     }
 
-    $base = Factory::getBase();
+    $base = new Base();
     //记录远程ip
     $dbLimits->add_ip($base->get_remote_ip(), $action, $period, 1);
   }

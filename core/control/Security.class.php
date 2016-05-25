@@ -81,7 +81,7 @@ class Security {
     //引用外部变量
     global $form_key_cookie_set;
 
-    $user = Factory::getUsers();
+    $user = new Users();
 
     if(!$user->is_logged_in() && !@$form_key_cookie_set) {
       $form_key_cookie_set = true;
@@ -103,8 +103,7 @@ class Security {
     //掺杂变量
     $salt = 'form_security_salt';
 
-    require_once CORE_PATH.'Factory.class.php';
-    $user = Factory::getUsers();
+    $user = new Users();
 
     if($user->is_logged_in())
       return sha1($salt.'/'.$action.'/'.$timestamp.'/'.$user->get_logged_in_userid().'/'.$user->get_logged_in_user_field('passsalt'));
@@ -121,7 +120,7 @@ class Security {
 
     $timestamp = ('db_time');
 
-    $user = Factory::getUsers();
+    $user = new Users();
     return (int)($user->is_logged_in()).'-'.$timestamp.'-'.self::calc_form_security_hash($action, $timestamp);
   }
 
@@ -130,8 +129,7 @@ class Security {
    * @return bool
    */
   public function check_form_security_code($action, $value) {
-    require_once CORE_PATH.'Factory.class.php';
-    $users = Factory::getUsers();
+    $users = new Users();
 
     //需要报告的错误
     $report_problems = array();
