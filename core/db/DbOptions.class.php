@@ -12,7 +12,7 @@ if(!defined('VERSION'))
 }
 
 class DbOptions {
-  const COLUMNS=['id', 'name', 'value'];
+  // const COLUMNS=['id', 'name', 'value', 'autoload'];
   /**
    * 数据库对象
    */
@@ -35,8 +35,8 @@ class DbOptions {
   public function create_option($name, $value, $autoload) {
     // 不使用REPLACE 因为REPLACE会将id自动+1
     // $this->db->query_sub('REPLACE options (name, value) VALUES ($, $)', $name, $value);
-    $query = 'INSERT INTO options (name, value, autoload) VALUES ($, $, $)';
-    $this->db->query_sub($query, $name, $value, ($autoload ? 'yes', 'no') );
+    $query = 'INSERT INTO options (`name`, `value`, `autoload`) VALUES ($, $, $)';
+    $this->db->query($query, $name, $value, ($autoload ? 'yes' : 'no') );
     return $this->db->last_insert_id();
   }
 
@@ -54,8 +54,12 @@ class DbOptions {
    * @param  $name  option 的名称
    * @param  $value  要设置的值
    */
-  public function get_all_option() {
-    $result = $this->db->query_sub('');
-    $base = Factory::getObject('Base');
+  public function get_all_options() {
+    $query = 'SELECT `id`, `name`, `value`, `autoload` FROM `options`';
+    $result = $this->db->query($query);
+
+    $res = $this->db->get_all_assoc($result, 'name', 'value');
+    print_r($res);
+    // $base = Factory::getObject('Base');
   }
 }

@@ -1,6 +1,17 @@
 更新说明
 ====
 
+### 5月24日
+
+- Factory.class.php
+  * 将control层中的核心代码去掉，不必使用工厂模式，因为类名不会做很大修改。
+- view层
+  - Index.class.php
+    * 增加了显示的内容和显示逻辑
+  - index.phtml
+    * 将部分代码改为php逻辑显示
+
+
 ### 5月21日
 
 修改的文件
@@ -20,24 +31,24 @@
 修改的文件
 
 - Factory.class.php<br>
-    增加了部分函数
+  * 增加了部分函数
 - Limit.class.php<br>
-    完善了限制逻辑部分
+  * 完善了限制逻辑部分
 - Security.class.php<br>
-    修改了部分代码
+  * 修改了部分代码
 - DbInvitation.class.php<br>
     
 - DbLimits.class.php<br>
     
 - index.php<br>
-    修改了版本号
+  * 修改了版本号
 
 增加的文件
 
 - Lang.class.php<br>
-    管理语言
+  * 管理语言
 - DbBlock.class.php<br>
-    管理Block数据库
+  * 管理Block数据库
 - block.phtml
 - login.phtml
 - register.phtml

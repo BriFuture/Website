@@ -74,14 +74,11 @@ class Factory{
 
   /**
    *  通过名字返回相应类的对象
+   *  control中的类不必使用工厂，因为不用怎么更改,主要是对view层的类做工厂
    */
   public static function getObject($name) {
     switch ($name) {
-      case 'Security':
-      case 'Users':
-      case 'Configure':
-      case 'Page':
-      case 'Options':
+      case 'Index':
         $object = new $name();
         break;
       default:
@@ -89,38 +86,6 @@ class Factory{
         break;
     }
     return $object;
-  }
-
-  /**
-   * 使用factory的autoload自动引用需要的文件
-   * @return Security object
-   */
-  public static function getSecurity() {
-    return new Security();
-  }
-
-  /**
-   * 使用factory的autoload自动引用需要的文件
-   * @return Users object
-   */
-  public static function getUsers() {
-    return new Users();
-  }
-
-  public static function getBase() {
-    return new Base();
-  }
-  
-  public static function getConfigure() {
-    return new Configure();
-  }
-
-  public static function getPage() {
-    return new Page();
-  }
-
-  public static function getOptions() {
-    return new Options();
   }
 
   public static function getDbLimits() {

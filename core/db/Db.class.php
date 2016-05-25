@@ -72,11 +72,11 @@ class Db implements DbImpl{
   private function connect($fail_handle) {
     if($this->persistent)
     {
-      $db = new Mysqli('P:'.HOST, USER, PASSWD, DATABASE);
+      $db = new mysqli('P:'.HOST, USER, PASSWD, DATABASE);
     }
     else
     {
-      $db = new Mysqli(HOST, USER, PASSWD, DATABASE);
+      $db = new mysqli(HOST, USER, PASSWD, DATABASE);
     }
     if($db->connect_error)
     {
@@ -130,7 +130,10 @@ class Db implements DbImpl{
     {
       $this->connect(null);
       if(!($this->connection instanceof mysqli))
-        Base::fatal_error('Failed to connect to database');
+      {
+        $base = Factory::getObject('Base');
+        $base->fatal_error('Failed to connect to database');
+      }
     }
     return $this->connection;
   }
@@ -142,11 +145,13 @@ class Db implements DbImpl{
     //如果已经建立连接，关闭
     if($this->connection instanceof mysqli) 
     {
-      Base::report_process('db_disconnect');
+      $base = Factory::getObject('Base');
+      $base->report_process('db_disconnect');
       if(!$this->persistent)
       {
         if(!$this->connection->close())
-          Base::fatal_error('Database disconnect failed');
+          $base = Factory::getObject('Base');
+          $base->fatal_error('Database disconnect failed');
       }
     }
     //指向空对象
@@ -297,7 +302,8 @@ class Db implements DbImpl{
       //如果找到的位置不是数字，报错
       if(!is_numeric($position))
       {
-        Base::fatal_error('Insufficient parameters in query: '. $query);
+        $base = Factory::getObject('Base');
+        $base->fatal_error('Insufficient parameters in query: '. $query);
       }
       //换成mysql语句
       $value = argument_to_mysql($arguments[$argument], $alwaysquote);
@@ -318,7 +324,7 @@ class Db implements DbImpl{
     //所有的参数，数组形式
     $funcargs = func_get_args();
     //取第一个参数之后的参数
-    return query_raw(substitude($query, array_slice($funcargs, 1)));
+    return $this->query_raw($this->substitude($query, array_slice($funcargs, 1)));
   }
 
   public function last_insert_id() {
@@ -427,7 +433,8 @@ class Db implements DbImpl{
 
         if(isset($selectspecs[$skey]['outcolumns'][$columnas]))
         {
-          Base::fatal_error('Duplicate column name in multi_select()');
+          $base = Factory::getObject('Base');
+          $base->fatal_error('Duplicate column name in multi_select()');
         }
 
         $selectspecs[$skey]['outcolumns'][$columnas] = $columnfrom;
@@ -435,11 +442,13 @@ class Db implements DbImpl{
 
       if(isset($selectspec['arraykey']))
         if(!isset($selectspecs[$skey]['outcolumns'][$selectspec['arraykey']]))
-          Base::fatal_error('Used arraykey not in columns in multi_select()');
+          $base = Factory::getObject('Base');
+          $base->fatal_error('Used arraykey not in columns in multi_select()');
 
       if(isset($selectspec['arrayvalue']))
         if(!isset($selectspecs[$skey]['outcolumns'][$selectspec['arrayvalue']]))
-          Base::fatal_error('Used arrayvalue not in columns in multi_select()');
+          $base = Factory::getObject('Base');
+          $base->fatal_error('Used arrayvalue not in columns in multi_select()');
     }
     //
     $outcolumns=array();
@@ -466,15 +475,19 @@ class Db implements DbImpl{
     }
   }
    /**
-    * @param $key 指定嵌套数组的键
-    *
-    * 返回嵌套的关联数组
+    * @param $result  mysqli result
+    * @param $key     指定嵌套数组的键
+    * @param $value   显示$value列的值
+    * 未指定$key, $value时返回嵌套的关联数组
+    * 指定$key时， 将$key对应的值作为嵌套数组的键
+    * 未指定$key但指定$value时， 返回指定$value列的值
+    * $key $value不能为数组
    */
   static function get_all_assoc($result, $key=null, $value=null) {
-
     if(!($result instanceof mysqli_result))
     {
-      Base::fatal_error('Reading assocs from invalid result');
+      $base = Factory::getObject('Base');
+      $base->fatal_error('Reading assocs from invalid result');
       return;
     }
 
@@ -485,7 +498,7 @@ class Db implements DbImpl{
       // echo '<br>'.$key;
 
       //如果指定了$key  则将返回的每一个结果集中的第$key列的值作为嵌套数组的键
-      //如果指定了$value列， 将返回结果集中的第$value列 都是整型变量
+      //如果指定了$value列， 将返回结果集中的第$value列 
       if(isset($key))
       {
         $assocs[$assoc[$key]] = isset($value) ? $assoc[$value] : $assoc;
@@ -504,7 +517,8 @@ class Db implements DbImpl{
   static function get_one_assoc($result, $allowempty=false) {
     if(!($result instanceof mysqli_result))
     {
-      Base::fatal_error('Reading one assoc from invalid result');
+      $base = Factory::getObject('Base');
+      $base->fatal_error('Reading one assoc from invalid result');
       return;
     }  
 
@@ -520,14 +534,16 @@ class Db implements DbImpl{
     }
     else
     {
-      Base::fatal_error('Reading one assoc from empty result');
+      $base = Factory::getObject('Base');
+      $base->fatal_error('Reading one assoc from empty result');
     }
   }
 
   static function get_all_value($result) {
     if(!($result instanceof mysqli_result)) 
     {
-      Base::fatal_error('Reading values from invalid result');
+      $base = Factory::getObject('Base');
+      $base->fatal_error('Reading values from invalid result');
       return;
     }
     $output = array();
@@ -542,7 +558,8 @@ class Db implements DbImpl{
   static function get_one_value($result, $allowempty=false) {
     if(!($result instanceof mysqli_result)) 
     {
-      Base::fatal_error('Reading one value from invalid result');
+      $base = Factory::getObject('Base');
+      $base->fatal_error('Reading one value from invalid result');
       return;
     }
 
@@ -557,7 +574,8 @@ class Db implements DbImpl{
     }
     else
     {
-      Base::fatal_error('Reading one value from empty results');
+      $base = Factory::getObject('Base');
+      $base->fatal_error('Reading one value from empty results');
     }
   }
 

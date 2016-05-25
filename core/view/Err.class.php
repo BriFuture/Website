@@ -28,10 +28,11 @@ class Err extends Page{
     elseif(isset($msg) && !isset($msg['errcode']))
     {
       $this->view['msg'] = $msg;
+      $this->view['errcode'] = 0;
     }
     else
     {
-      $this->view['errcode'] = @$_GET['err'];
+      $this->view['errcode'] = Base::super_get('err');
     }
 
     //引用常量

@@ -6,9 +6,7 @@
   font-weight: auto;
 }
 
-.row a{
-  text-decoration-line: none;
-}
+
 
 .col-link-item {
   /*display: block;*/
@@ -29,7 +27,9 @@
   width: 60px;
   height: 60px;
 }
-
+.row a{
+  text-decoration: none;
+}
 
 @media (min-width: 768px)  {
   #carousel-index {
@@ -39,9 +39,7 @@
     width: 120px;
     height: 120px;
   }
-  .row {
-    margin-left: auto;
-  }
+
 }
 
 /*very large 
