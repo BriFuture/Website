@@ -1,0 +1,9 @@
+<?php 
+date_default_timezone_set('Asia/shanghai');
+// date_default_timezone_get();
+$year = substr(date('o'), -2);
+  $month = date('m');
+  $random_num = sprintf('%06d', mt_rand(0,999999));
+  $uid = $year.$month.$random_num;
+echo "$ and $uid<br>";
+var_dump($year);

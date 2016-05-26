@@ -1,0 +1,63 @@
+<?php 
+if(!defined('VERSION')) {
+  header('Location:/');
+  exit();
+}
+?>
+<!DOCTYPE html>
+<html lang="zh-CN" PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
+<head>
+  <meta  charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=0">
+  <meta http-equiv="Content-Type" content="text/html;" />
+  <meta name="renderer" content="webkit">
+  <title>sunsmell主页</title>
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+  <!-- jQuery文件-->
+  <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+  <!-- 新 Bootstrap 核心 CSS 文件 -->
+  <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+  <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="/css/header-footer.css" />
+  <link rel="stylesheet" type="text/css" href="/css/info.css" />
+</head>
+<body>
+  <?php include $this->view['header']; ?>
+  <div class="container">
+    <div class="alert alert-success">
+      <p class="text-left">本机IP为： <?php echo $_SERVER['REMOTE_ADDR']; ?> <br /></p>
+      <p class="text-left">访问的地址为：<?php echo $_SERVER['SERVER_NAME']; ?><br /></p>
+    </div>
+    <div class="alert alert-success">
+      <p class="text-left">访问时间为:<?php echo date("Y-m-d h:i:s",$_SERVER['REQUEST_TIME']); ?></p>
+    </div>
+    <div class="alert alert-success">
+      <p class="text-left">使用的客户端代理： <?php echo $_SERVER['HTTP_USER_AGENT'];?></p>
+    </div>
+    <div class="music">
+      <audio controls="controls" loop="loop" >
+        <source src="/static/music/雁回林.mp3" type="audio/mp3" />
+        <source src="/static/music/02.mp3" type="audio/mp3" />
+        <source src="/static/music/03.mp3" type="audio/mp3" />
+        <source src="/static/music/04.mp3" type="audio/mp3" />
+        <source src="/static/music/05.mp3" type="audio/mp3" />
+        <embed height="100%" width="100%" src="/static/music/雁回林.mp3" />
+      </audio>
+    </div>
+    <!-- <div class="imglist"> -->
+      <?php #Base::html_content('img', array('src'=>'index.php?action=image&p=static&a=pic&n=dynamic.gif'));  ?>
+      <?php #Base::html_content('img', array('src'=>'/static/pic/dynamic-1.gif'));  ?>
+      <?php #Base::html_content('img', array('src'=>'/static/pic/dynamic-2.gif'));  ?>
+      <?php #Base::html_content('img', array('src'=>'/static/pic/dynamic-3.gif'));  ?>
+    <!-- </div> -->
+    <?php if(isset($showIp) && $showIp) : ?>
+    <div>
+      <p>以下是IP138提供的IP查询</p>
+      <iframe src="/index.php?action=getip" style="width: 100%; height: 300px"></iframe>
+    </div>
+    <?php endif; ?>
+  </div>
+  <?php include $this->view['footer']; ?> 
+</body>

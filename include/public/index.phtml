@@ -1,0 +1,94 @@
+<?php 
+if(!defined('VERSION')) {
+  header('Location:/');
+  exit();
+}
+?>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta  charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <!-- <meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1, width=device-width"> -->
+  <!-- <meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1" > -->
+	<meta http-equiv="Content-Type" content="text/html;" />
+	<meta name="description" content="主页" />
+  <meta name="renderer" content="webkit">
+  <title><?php echo $this->view['title'] ?></title>
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+  <!-- jQuery文件-->
+  <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+  <!-- 新 Bootstrap 核心 CSS 文件 -->
+  <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+  <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="/css/header-footer.css" />
+  <link rel="stylesheet" type="text/css" href="/css/index.css" />
+  <script type="text/javascript" src="/js/index.js"></script>
+</head>
+<body>
+  <?php include $this->view['header']; ?>
+  <!-- <div class="jumbotron"> -->
+  <div id="carousel-index" class="carousel slide" data-ride="carousel">
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+      <li data-target="#carousel-index" data-slide-to="0" class="active"></li>
+      <li data-target="#carousel-index" data-slide-to="1"></li>
+      <li data-target="#carousel-index" data-slide-to="2"></li>
+    </ol>
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner" role="listbox">
+      <?php foreach ($this->view['carousel-item'] as $item) : ?>
+      <div class="item <?php if(isset($item['active']) && $item['active']) echo 'active'; ?>">
+        <img src="<?php echo $item['src'] ?>" alt="图片1">
+        <div class="carousel-caption">
+          <?php echo $item['description'] ?>
+        </div>
+      </div>
+      <?php endforeach; ?>
+    </div>
+    <!-- Controls -->
+    <a class="left carousel-control" href="#carousel-index" role="button" data-slide="prev">
+      <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="right carousel-control" href="#carousel-index" role="button" data-slide="next">
+      <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
+  </div>
+  <div class="container-fluid marketing">
+    <div class="row">
+      <?php  foreach($this->view['block'] as $block): ?>
+      <div class="col-xs-6 col-xs-offset-3 col-link-item visible-xs-block">
+      <!-- vertical arrangement -->
+        <a class="" href="<?php echo $block['href'];?>">
+          <div class="">  
+            <img src="<?php echo $block['img']; ?>" class="img-thumbnail">
+            <h2><?php echo $block['title']; ?></h2>
+            <p><?php echo $block['description']; ?></p>
+          </div>
+        </a>
+      </div>
+      <div class="col-sm-3 col-link-item hidden-xs">
+      <!-- horizontal arrangemet first and remains vertical -->
+        <a class="" href="<?php echo $block['href'];?>">
+          <div class="">  
+            <img src="<?php echo $block['img']; ?>" class="img-thumbnail">
+            <h2><?php echo $block['title']; ?></h2>
+            <p><?php echo $block['description']; ?></p>
+          </div>
+        </a>
+      </div>
+      <?php endforeach; ?>
+    </div>
+    <?php if(DEBUG_MODE):?>
+    <div class="alert alert-warning">
+      <p class="text-left">该网站还有很多东西没有完工！<br /></p>
+    </div>  
+    <?php endif;?>
+  </div>
+  <?php include $this->view['footer']; ?> 
+</body>
+</html>
