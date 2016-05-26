@@ -55,8 +55,8 @@ class Factory{
       require_once $php;
   }
 
-  private static function autoload_view($class) {
-    $php = VIEW_PATH.$class.'.class.php';
+  private static function autoload_core($class) {
+    $php = CORE_PATH.$class.'.class.php';
     if(is_file($php))
       require_once $php;
   }
@@ -67,6 +67,8 @@ class Factory{
    * 但是类名却不正确，User.class.php中的类名为User而不是control_Users
    */
   static function autoload($class) {
+    //不再使用该函数
+    return;
     $php = CORE_PATH.strtr($class, '_', '/').'.class.php';
     require_once $php;
   }
@@ -88,7 +90,4 @@ class Factory{
     return $object;
   }
 
-  public static function getDbLimits() {
-    return new DbLimits();
-  }
 }
