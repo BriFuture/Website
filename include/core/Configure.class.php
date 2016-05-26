@@ -32,7 +32,7 @@ class Configure {
    * 
    */
   public function __construct($config_file=self::DEFAULT_CONFIG) {
-    $this->config_file = CORE_PATH.$config_file;
+    $this->config_file = INCLUDE_PATH.$config_file;
 
     if(!file_exists($this->config_file))
     {

@@ -47,7 +47,7 @@ class Page {
   }
 
   public function set_reuse() {
-    require CORE_PATH.'const.php';
+    require INCLUDE_PATH.'const.php';
     $this->view['header'] = $URLS['body-header'];
     $this->view['footer'] = $URLS['body-footer'];
     $this->view['logo']   = $URLS['logo'];

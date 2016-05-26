@@ -9,7 +9,7 @@ if(!defined('VERSION')) {
   header('Location:/');
   exit();
 }
-require_once CORE_PATH.'config.php';
+require_once INCLUDE_PATH.'config.php';
 class Base {
 
   /**

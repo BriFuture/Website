@@ -10,7 +10,6 @@
 if(!defined('VERSION')) {
   header('Location:/');
 }
-require_once CORE_PATH.'db/Db.class.php';
 
 class Db_viewinfo {
   // private static $PRIMARY='id';

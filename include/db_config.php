@@ -16,7 +16,7 @@ if(!defined('VERSION')) {
  * 定义数据库参数
  */
 //测试本地
-defined('HOST')||define('HOST','127.0.0.1');
-defined('DATABASE')||define('DATABASE', 'mydata');
-defined('USER')||define('USER', 'root');
-defined('PASSWD')||define('PASSWD', '');
+define('HOST',      '127.0.0.1');
+define('DATABASE',  'mydata');
+define('USER',      'root');
+define('PASSWD',    '');

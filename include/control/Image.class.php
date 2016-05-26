@@ -53,7 +53,7 @@ class Image {
     if(!$im)
     {
       //无法读取图片时
-      require CORE_PATH.'const.php';
+      require INCLUDE_PATH.'const.php';
       $im = imagecreatefromjpeg($URLS['nothing-jpg']);
       $this->imagepicture('jpg',$im);
     }

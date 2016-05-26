@@ -13,7 +13,7 @@ if(!defined('VERSION'))
   exit();
 }
 //读取配置
-require_once CORE_PATH.'db_config.php';
+require_once INCLUDE_PATH.'db_config.php';
 
 //实现接口
 require_once DB_PATH.'Db.impl.php';

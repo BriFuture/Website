@@ -29,10 +29,7 @@ class ViewInfo extends Page {
    * @param  $msg  额外的信息
    */
   public function defaults($msg=null) {
-      // require_once CORE_PATH.'db/Db.class.php';
-    require CORE_PATH.'const.php';
-    require_once CORE_PATH.'db/DbViewinfo.class.php';
-    require_once CORE_PATH.'Security.class.php';
+    require INCLUDE_PATH.'const.php';
     $viewinfo = new Db_viewinfo();
     $view = $viewinfo->get_all_view();
     parent::render();

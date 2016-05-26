@@ -75,7 +75,7 @@ class Mail {
    * @param  $msg  包含收信人、内容和标题的数组
    */ 
   public function send($msg) {
-    require_once CORE_PATH.'const.php';
+    require_once INCLUDE_PATH.'const.php';
     $security = new Security;
     
     $this->check();
