@@ -26,18 +26,61 @@ class DbOptions {
 
   /**
    * 添加数据库中的option 选项 
-   *  $name 为$value
    * @param  $name  option 的名称
    * @param  $value  要设置的值
    * @param  $autoload  bool  是否要自动加载
    * @return  返回最后插入的id值
    */
-  public function create_option($name, $value, $autoload) {
+  private function create($name, $value, $autoload) {
     // 不使用REPLACE 因为REPLACE会将id自动+1
     // $this->db->query_sub('REPLACE options (name, value) VALUES ($, $)', $name, $value);
-    $query = 'INSERT INTO options (`name`, `value`, `autoload`) VALUES ($, $, $)';
-    $this->db->query($query, $name, $value, ($autoload ? 'yes' : 'no') );
+    $query_str = 'INSERT INTO options (`name`, `value`, `autoload`) VALUES ($, $, $)';
+    $this->db->query($query_str, $name, $value, ($autoload ? 'y' : 'n') );
     return $this->db->last_insert_id();
+  }
+
+  /**
+   * 设置option的值，如果在数据库中没有该选项，就创建一个，如果有就更改该选项
+   * @param  $name  option 的名称
+   * @param  $value  要设置的值
+   * @param  $autoload  bool  是否要自动加载
+   * @return  如果创建选项的话，返回最后插入的id值
+   */
+  public function set_option($name, $value, $autoload) {
+    if(!isset($this->options))
+    {
+      $this->get_all_options();
+    }
+
+    if(array_key_exists($name, $this->options)) 
+    {
+      $this->update($name, $value, $autoload);
+    }
+    else
+    {
+      return $this->create($name, $value, $autoload);
+    }
+
+  }
+
+  /**
+   * 更新选项
+   * @param  $name      option 的名称
+   * @param  $value     要设置的值
+   * @param  $autoload  bool  是否要自动加载
+   */
+  public function update($name, $value, $autoload) {
+    $query_str = 'UPDATE `options` SET `value`=$, `autoload`=$ WHERE `name`=$';
+    $this->db->query($query_str, $value, $autoload, $name);
+  }
+
+  /**
+   * 删除
+   * @param  要删除项的名字
+   */
+  public function delete($name) {
+    $query_str = 'DELETE FROM `options` WHERE `name`=$';
+    $this->db->query($query_str, $name);
   }
 
   /**
@@ -45,8 +88,15 @@ class DbOptions {
    * @param  $name  option 的名称
    * @param  $value  要设置的值
    */
-  public function get_option($name, $value) {
-    
+  public function get_option($name) {
+    foreach ($this->options as $index => $option) 
+    {
+      if($option['name'] === $name)
+      {
+        return $option;
+      }
+    }
+    return false;
   }
 
   /**
@@ -60,7 +110,6 @@ class DbOptions {
     $result = $this->db->query($query);
 
     $this->options = $this->db->get_all_assoc($result);
-    // print_r($res);
     return $this->options;
   }
 }

@@ -306,7 +306,7 @@ class Db implements DbImpl{
         $base->fatal_error('Insufficient parameters in query: '. $query);
       }
       //换成mysql语句
-      $value = argument_to_mysql($arguments[$argument], $alwaysquote);
+      $value = $this->argument_to_mysql($arguments[$argument], $alwaysquote);
       //用$value替换掉$和#符号，1表示替换，0表示插入
       $query = substr_replace($query, $value, $position, 1);
       $offset = $position + strlen($value);
@@ -523,14 +523,21 @@ class Db implements DbImpl{
 
     return $results;
   }
-   /**
-    * @param $result  mysqli result
-    * @param $key     指定嵌套数组的键
-    * @param $value   显示$value列的值
+
+  /**
     * 未指定$key, $value时返回嵌套的关联数组
     * 指定$key时， 将$key对应的值作为嵌套数组的键
     * 未指定$key但指定$value时， 返回指定$value列的值
     * $key $value不能为数组
+    * @param  $result  mysqli result
+    * @param  $key     指定嵌套数组的键
+    * @param  $value   显示$value列的值
+    * @return  返回嵌套的关联数组
+    *     array(
+    *       'akey1' => array('key1'=>'value1', ···),
+    *       'akey2' => array('key1'=>'value1', ···),
+    *       ·······
+    *     )
    */
   static function get_all_assoc($result, $key=null, $value=null) {
     if(!($result instanceof mysqli_result))
@@ -563,7 +570,13 @@ class Db implements DbImpl{
     return $assocs;
   }
 
-  static function get_one_assoc($result, $allowempty=false) {
+  /**
+   * @param  $result  mysqli result
+   * @param  $allow_empty  是否允许为空,默认为false
+   * @return 返回关联数组
+   *      array('key1'=>'value1', 'key2'=>'name2', ···)
+   */
+  static function get_one_assoc($result, $allow_empty=false) {
     if(!($result instanceof mysqli_result))
     {
       $base = new Base();
@@ -577,7 +590,7 @@ class Db implements DbImpl{
     {
       return $assoc;
     }
-    if($allowempty)
+    if($allow_empty)
     {
       return null;
     }
@@ -588,6 +601,9 @@ class Db implements DbImpl{
     }
   }
 
+  /**
+   * @param  $result  mysqli result
+   */
   static function get_all_value($result) {
     if(!($result instanceof mysqli_result)) 
     {
@@ -604,7 +620,11 @@ class Db implements DbImpl{
     return $output;
   }
 
-  static function get_one_value($result, $allowempty=false) {
+  /**
+   * @param  $result  mysqli result
+   * @param  $allow_empty  是否允许为空,默认为false
+   */
+  static function get_one_value($result, $allow_empty=false) {
     if(!($result instanceof mysqli_result)) 
     {
       $base = new Base();
@@ -617,7 +637,7 @@ class Db implements DbImpl{
     {
       return $row[0];
     }
-    if($allowempty)
+    if($allow_empty)
     {
       return null;
     }
@@ -628,31 +648,4 @@ class Db implements DbImpl{
     }
   }
 
-  /**
-   * @param  $name
-   * @param  $value
-   */
-  public function set_option($name, $value) {
-
-  }
-
-  /**
-   * @deprecated 仅作为测试使用
-  */
-  private function testDB() {
-    $link = mysql_connect(HOST, USER, PASSWD)
-        or die('Could not connect: ' . mysql_error());
-    // echo 'Connected successfully';
-    mysql_select_db(DATABASE) or die('Could not select database');
-
-    // 执行 SQL 查询
-    $query = 'SELECT * FROM view_info';
-    $result = mysql_query($query) or die('Query failed: ' . mysql_error());
-
-    // 释放结果集
-    mysql_free_result($result);
-
-    // 关闭连接
-    mysql_close($link);
-  }
 }

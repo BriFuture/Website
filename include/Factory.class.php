@@ -22,9 +22,9 @@ class Factory{
    */
   static function register() {
     // 注册多个autoload
+    spl_autoload_register("self::autoload_core");
     spl_autoload_register("self::autoload_control");
     spl_autoload_register("self::autoload_db");
-    spl_autoload_register("self::autoload_view");
   }
   /**
    * @deprecated 直接使用autoload 引用加载

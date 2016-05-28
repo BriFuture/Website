@@ -117,7 +117,7 @@ class Base {
         case 'test':
           if(DEBUG_MODE)
           {
-            $page = PUBLIC_PATH.$this->super_get(self::URL_LAYER_PAGE).'.phtml';
+            $page = VIEW_PATH.$this->super_get(self::URL_LAYER_PAGE).'.phtml';
             include $page;
           }
           else

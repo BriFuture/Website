@@ -139,10 +139,20 @@ class Image {
     imagedestroy($im);
   }
 
+  /**
+   * 判断php是否支持gd绘图
+   * @return  bool
+   */
   public function has_gd_image() {
     return extension_loaded('gd') && function_exists('imagecreatefromstring') && function_exists('imagejpeg');
   }
 
+  /**
+   * 判断图片文件是否太大
+   * @param  $imagefile  图片文件
+   * @param  $size  设置的大小
+   * @return 返回计算出的数据字节大小和所需要字节大小的1.5倍的平方
+   */
   public function image_file_too_big($imagefile, $size=null) {
     if(function_exists('memory_get_usage'))
     {
@@ -190,6 +200,14 @@ class Image {
     return false;
   }
 
+  /**
+   * 图片数据限制
+   * @param  &$width     宽度限制
+   * @param  &$height    长度限制
+   * @param  $max_width  最大的宽度
+   * @param  $max_height 最大宽度，如果未指定，就用max_width
+   * @return  返回图片数据
+   */
   public function image_constrain_data($image_data, &$width, &$height, $max_width, $max_height=null) {
     $inimage = @imagecreatefromstring($image_data);
 
@@ -210,6 +228,15 @@ class Image {
     return null;
   }
 
+  /**
+   * 判断图片是否超过限制，如果超过限制的话按照比例缩小
+   * @param  &$width     宽度限制
+   * @param  &$height    长度限制
+   * @param  $max_width  最大的宽度
+   * @param  $max_height 最大宽度，如果未指定，就用max_width
+   * @return  bool  
+   *       true  超过限制  false  没有超过
+   */
   public function image_constrain(&$width, &$height, $max_width, $max_height=null) {
     if(!isset($max_height))
     {
@@ -228,6 +255,12 @@ class Image {
     return false;
   }
 
+  /**
+   * 改变图片大小
+   * @param  &$image  图片的指针
+   * @param  $width   图片的宽度
+   * @param  $height  图片的高度
+   */
   public function gd_image_resize(&$image, $width, $height) {
     //save image 
     $old_image = $image;
@@ -251,12 +284,20 @@ class Image {
     imagedestroy($old_image);
   }
 
+  /**
+   * 绘出jpeg格式的图片
+   * @param  $image  图片句柄
+   * @return  
+   */
   public function gd_image_jpeg($image, $output=false) {
     ob_start();
     imagejpeg($image, null, 90);
     return $output ? ob_get_flush() : ob_get_clean();
   }
 
+  /**
+   * 返回gd支持的图片格式
+   */
   public function gd_image_formats() {
     $image_type_bits = imagetypes();
 

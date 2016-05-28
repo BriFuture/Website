@@ -11,5 +11,8 @@ if(!defined('VERSION')) {
 }
 
 class Login extends Page {
-  
+
+  public function view_login($msg) {
+    $this->render();
+  }
 }
