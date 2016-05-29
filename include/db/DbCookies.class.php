@@ -14,7 +14,7 @@ class DbCookies {
 
   const COLUMNS=['cookieid', 'created', 'createip', 'updated', 'updateip'];
   private $db;
-  private $table_name = 'options';
+  const TABLE_NAME = 'cookies';
 
   public function __construct() {
     $this->db = Db::getInstance();

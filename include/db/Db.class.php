@@ -318,7 +318,7 @@ class Db implements DbImpl{
    * 其它对象想要查询数据库，应该使用query()函数
    * 封装了query_raw()和substitude() 查询简单
    * @param $query 可以是多个参数
-   *  
+   * @return  查询结果
    */
   public function query($query) {
     //所有的参数，数组形式
@@ -329,6 +329,7 @@ class Db implements DbImpl{
 
   /**
    * 封装mysqli对象的last_insert_id
+   * @return  last insert id
    */
   public function last_insert_id() {
     return $this->connection()->last_insert_id;
@@ -336,13 +337,14 @@ class Db implements DbImpl{
 
   /**
    * 封装mysqli对象的affected_rows
+   * @return  affected rows
    */
   public function affected_rows() {
     return $this->connection()->affected_rows;
   }
 
   /**
-   * 返回结果集的行数
+   * @return 返回结果集的行数
    */
   public static function num_rows($result) {
     if($result instanceof mysqli)
@@ -351,7 +353,6 @@ class Db implements DbImpl{
   }
 
   /**
-   * 
    * @return  返回随机生成的大整数
    */
   public static function random_bigint() {
@@ -365,6 +366,9 @@ class Db implements DbImpl{
    * 不再需要每个类都写mysql查询selcet语句了，
    * 而是用数组的形式给出需要查询的列以及列的别名（key）
    * 可根据页面逻辑需要更改$select_spec
+   *
+   *  *** 查询语句和结果读取 ***
+   *
    * @param  $select_spec  数组
    *  可能的键有： 
    *    columns    列名
@@ -372,6 +376,7 @@ class Db implements DbImpl{
    *    limit      条数限制
    *    source     来源，也就是表名
    *    array_key  指定返回的结果集的键
+   * @return  关联数组，从数据库读取的结果
    */
   public function single_select($select_spec) {
     //构造query语句
@@ -418,6 +423,7 @@ class Db implements DbImpl{
    *    outcolumns
    *    autocolumn
    *  包含 $selectspec数组
+   * @return  关联数组，数据库返回的结果
    */
   public function multi_select($select_specs) {
     //没有参数
@@ -517,6 +523,7 @@ class Db implements DbImpl{
       $query_str.=$this->substitude($query_str, @$select_spec['arguments']);
     }
 
+    //原始结果集
     $result_raw = $this->query_raw($query_str);
 
     $results = $this->get_all_assoc($result_raw);
@@ -539,7 +546,7 @@ class Db implements DbImpl{
     *       ·······
     *     )
    */
-  static function get_all_assoc($result, $key=null, $value=null) {
+  public static function get_all_assoc($result, $key=null, $value=null) {
     if(!($result instanceof mysqli_result))
     {
       $base = new Base();
@@ -570,13 +577,17 @@ class Db implements DbImpl{
     return $assocs;
   }
 
+  public function get_column_value($table, $column) {
+    
+  }
+
   /**
    * @param  $result  mysqli result
    * @param  $allow_empty  是否允许为空,默认为false
-   * @return 返回关联数组
+   * @return 返回关联数组，只返回结果集中的第一个
    *      array('key1'=>'value1', 'key2'=>'name2', ···)
    */
-  static function get_one_assoc($result, $allow_empty=false) {
+  public static function get_one_assoc($result, $allow_empty=false) {
     if(!($result instanceof mysqli_result))
     {
       $base = new Base();
@@ -603,8 +614,10 @@ class Db implements DbImpl{
 
   /**
    * @param  $result  mysqli result
+   * @return  非关联数组
+   *      array('1'=>'somevalue1', '2'=>'somevalue2', ····)
    */
-  static function get_all_value($result) {
+  public static function get_all_value($result) {
     if(!($result instanceof mysqli_result)) 
     {
       $base = new Base();
@@ -623,8 +636,9 @@ class Db implements DbImpl{
   /**
    * @param  $result  mysqli result
    * @param  $allow_empty  是否允许为空,默认为false
+   * @return  结果集中的第一个数据或者null或者报错
    */
-  static function get_one_value($result, $allow_empty=false) {
+  public static function get_one_value($result, $allow_empty=false) {
     if(!($result instanceof mysqli_result)) 
     {
       $base = new Base();
@@ -633,10 +647,12 @@ class Db implements DbImpl{
     }
 
     $row = $result->fetch_row();
+    //如果有数据的话，只取每一行数据的第一个
     if(is_array($row))
     {
       return $row[0];
     }
+    //否则如果允许为空的话
     if($allow_empty)
     {
       return null;

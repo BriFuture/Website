@@ -12,9 +12,9 @@ if(!defined('VERSION'))
 }
 
 class DbInvitation {
-  const COLUMNS = [];
+  // const COLUMNS = [];
   private $db;
-  private $table_name = 'invitation';
+  const TABLE_NAME = 'invitation';
 
   public function __construct() {
     $this->db = Db::getInstance();

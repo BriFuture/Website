@@ -17,7 +17,7 @@ class DbOptions {
    * 数据库对象
    */
   private $db;
-  private $table_name = 'options';
+  const TABLE_NAME = 'options';
   private $options;
 
   public function __construct() {
@@ -29,14 +29,12 @@ class DbOptions {
    * @param  $name  option 的名称
    * @param  $value  要设置的值
    * @param  $autoload  bool  是否要自动加载
-   * @return  返回最后插入的id值
    */
   private function create($name, $value, $autoload) {
     // 不使用REPLACE 因为REPLACE会将id自动+1
     // $this->db->query_sub('REPLACE options (name, value) VALUES ($, $)', $name, $value);
     $query_str = 'INSERT INTO options (`name`, `value`, `autoload`) VALUES ($, $, $)';
     $this->db->query($query_str, $name, $value, ($autoload ? 'y' : 'n') );
-    return $this->db->last_insert_id();
   }
 
   /**
@@ -45,6 +43,7 @@ class DbOptions {
    * @param  $value  要设置的值
    * @param  $autoload  bool  是否要自动加载
    * @return  如果创建选项的话，返回最后插入的id值
+   *          如果是更新的话，返回影响的行数
    */
   public function set_option($name, $value, $autoload) {
     if(!isset($this->options))
@@ -55,10 +54,12 @@ class DbOptions {
     if(array_key_exists($name, $this->options)) 
     {
       $this->update($name, $value, $autoload);
+      return $this->db->affected_rows();
     }
     else
     {
-      return $this->create($name, $value, $autoload);
+      $this->create($name, $value, $autoload);
+      return $this->db->last_insert_id();
     }
 
   }
@@ -100,16 +101,22 @@ class DbOptions {
   }
 
   /**
+   *
+   */
+  public function get_column_value($column) {
+
+  }
+  /**
    * 读取数据库中的options的所有值
    * @param  $name  option 的名称
    * @param  $value  要设置的值
    * @return  数组
    */
   public function get_all_options() {
-    $query = 'SELECT `id`, `name`, `value`, `autoload` FROM `options`';
-    $result = $this->db->query($query);
+    $query_str = 'SELECT `id`, `name`, `value`, `autoload` FROM `options`';
+    $result = $this->db->query($query_str);
 
-    $this->options = $this->db->get_all_assoc($result);
+    $this->options = Db::get_all_assoc($result);
     return $this->options;
   }
 }

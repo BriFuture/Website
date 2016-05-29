@@ -13,9 +13,9 @@ if(!defined('VERSION'))
 }
 
 class DbBlock {
-  const COLUMNS = ['ID', 'name', 'style', 'create_time', 'permission'];
+  // const COLUMNS = ['ID', 'name', 'style', 'create_time', 'permission'];
   private $db;
-  private $table_name = 'block';
+  const TABLE_NAME = 'block';
 
   public function __construct() {
     $this->db = Db::getInstance();

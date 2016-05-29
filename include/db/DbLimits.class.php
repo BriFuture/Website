@@ -11,9 +11,9 @@ if(!defined('VERSION')) {
   exit();
 }
 class DbLimits {
-  const COLUMNS = [];
+  // const COLUMNS = [];
   private $db;
-  private $table_name = 'limits';
+  const TABLE_NAME = 'limits';
 
   public function __construct() {
     $this->db = Db::getInstance();

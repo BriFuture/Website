@@ -13,12 +13,12 @@ if(!defined('VERSION'))
 }
 
 class DbUser {
-  const $COLUMNS = ['id', 'UID','name', 'pass', 'passslat','lever', 'email', 'contact', 'picture', 'score'];
+  // const $COLUMNS = ['id', 'UID','name', 'pass', 'passslat','lever', 'email', 'contact', 'picture', 'score'];
   /**
    * 数据库对象
    */
   private $db;
-  private $table_name = 'user';
+  const TABLE_NAME = 'user';
   private $error;
 
   public function __construct() {

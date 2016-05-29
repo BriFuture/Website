@@ -12,9 +12,9 @@ if(!defined('VERSION')) {
 }
 
 class DbMessages {
-  const $COLUMNS = ['fromuserid', 'touserid', 'content', 'type', 'format', 'fromhidden', 'tohidden'];
+  // const $COLUMNS = ['fromuserid', 'touserid', 'content', 'type', 'format', 'fromhidden', 'tohidden'];
   private $db;
-  private $table_name = 'messages';
+  const TABLE_NAME = 'messages';
 
   function __construct() {
     $this->db = Db::getInstance();

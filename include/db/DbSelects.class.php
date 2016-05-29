@@ -14,9 +14,9 @@ if(!defined('VERSION'))
 }
 
 class DbSelects {
-  const COLUMNS = [];
+  // const COLUMNS = [];
   private $db;
-  private $table_name = "selects";
+  const TABLE_NAME = "selects";
 
   function __construct() {
     $this->db = Db::getInstance();

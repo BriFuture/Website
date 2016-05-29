@@ -13,9 +13,9 @@ if(!defined('VERSION')) {
 
 class Db_viewinfo {
   // private static $PRIMARY='id';
-  public static $COLUMNS=['id','IP','SID', 'Browser', 'Login_Time'];
+  // public static $COLUMNS=['id','IP','SID', 'Browser', 'Login_Time'];
   private $db;
-  private $table_name= 'view_info';
+  const TABLE_NAME = 'view_info';
 
   function __construct() {
     $this->db = Db::getInstance();
