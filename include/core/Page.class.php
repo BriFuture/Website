@@ -32,9 +32,9 @@ class Page {
     // var_dump($trace);
     //找到最后一个调用该函数的类的名称
     $name = strtolower($trace[0]['class']);
-
+    // print_r($trace[0]);
     $this->set_reuse();
-    $file = PUBLIC_PATH.$name.'.phtml';
+    $file = VIEW_PATH.$name.'.phtml';
     // echo $file;
     if(file_exists($file))
     {
@@ -78,8 +78,9 @@ class Page {
    * @param  $view  需要显示的逻辑
    */
   public function dispatch($file='Index', $view='index') {
-    //首字母大写
-    $classname = ucwords(str_replace('.php', '', strtolower($file)));
+    //首字母大写，将 Base::get_url() 重写之后不需要首字母大写了。
+    // $classname = ucwords(str_replace('.php', '', strtolower($file)));
+    $classname = str_replace('.php', '', $file);
     //如果存在相应的方法
     if(class_exists($classname))
     {
@@ -87,7 +88,7 @@ class Page {
       $method = strtolower('view_'. $view);
       if(!method_exists($classname, $method))
       {
-        $method = 'view_'.$classname;
+        $method = 'view_'.strtolower($classname);
       }
       $class->$method();
     }

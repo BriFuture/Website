@@ -36,8 +36,8 @@ class Index extends Page{
         'img'         => 'data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==', 
       ),
       array(
-        'href'        => '//blog.sunsmell.cc',
-        'title'       => 'My Blog',
+        'href'        => Base::get_path("TestJsGame"),
+        'title'       => 'My Game In test',
         'description' => 'my blog powered by wordpress',
         'img'         => 'data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==',
       ),

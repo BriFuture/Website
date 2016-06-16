@@ -107,7 +107,7 @@ class Base {
         case self::URL_LAYER_PAGE:
           $page->dispatch(strtolower($this->super_get(self::URL_LAYER_PAGE)), strtolower($this->super_get(self::URL_LAYER_VIEW)));
           break;
-        case 'ext':
+        case 'ext':  //扩展
           $cat = $this->super_get(self::URL_LAYER_CAT);
           if(is_dir($cat) && file_exists($cat.'/index.php'))
           {
@@ -142,23 +142,26 @@ class Base {
    * 使用指定的URL格式返回路径
    * @return url path
   */
-  public function get_path($request, $params=null) {
-    $path = PUBLIC_PATH ;
-    // if($request)
-    $request=str_replace('.class','',$request);
-    switch (self::$url_format) {
-      case self::URL_REWITE:
-        # code...
-        $request=str_replace('.php', '.html', $request);
-        $path='/'.$request;
+  public static function get_path($page, $view=null, $params=null) {
+    $options = new DbOptions();
+    $format = $options->get_option("path_format");
+    $url = "";
+    switch($format) {
+      case self::URL_FORMAT_FAKE_STATIC:
+        $url = "";
         break;
-      case self: URL_FORMAT_INDEX:
+      case self::URL_FORMAT_PARAM:
+        $url = "";
+        break;
+      case self::URL_FORMAT_SLASH:
+        $url = "";
+        break;
+      case self::URL_FORMAT_INDEX:
       default:
-        # code...
-        $path=$request;
+        $url = "/index.php?action=page&page=".$page.(($view === null) ? "" : "&view=".$view);
         break;
     }
-    return $path;
+    return $url;
   }
 
   /**

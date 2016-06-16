@@ -18,7 +18,7 @@ class DbOptions {
    */
   private $db;
   const TABLE_NAME = 'options';
-  private $options;
+  private $options = array();
 
   public function __construct() {
     $this->db = Db::getInstance();

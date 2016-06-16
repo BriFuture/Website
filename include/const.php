@@ -9,8 +9,8 @@ if(!defined('VERSION')) {
 //URL常量
 $URLS = array(
   'logo'        => '/static/img/mylogo-light.png',#'index.php?action=utils&util=paint&p=static&n=mylogo-light.png',
-  'body-header' => PUBLIC_PATH.'header.phtml',
-  'body-footer' => PUBLIC_PATH.'footer-thank.phtml',
+  'body-header' => VIEW_PATH.'header.phtml',
+  'body-footer' => VIEW_PATH.'footer-thank.phtml',
   'nothing-jpg' => WEB_ROOT.'static/img/nothing.jpg',
 );
 $TEXT = array(

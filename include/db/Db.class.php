@@ -307,7 +307,7 @@ class Db implements DbImpl{
       }
       //换成mysql语句
       $value = $this->argument_to_mysql($arguments[$argument], $alwaysquote);
-      //用$value替换掉$和#符号，1表示替换，0表示插入
+      //用$value替换掉$和#符号, 最后一个参数为长度，1表示替换，0表示插入
       $query = substr_replace($query, $value, $position, 1);
       $offset = $position + strlen($value);
     }
