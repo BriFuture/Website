@@ -499,7 +499,7 @@ class Db implements DbImpl{
     //构造query语句
     $query_str='';
     foreach($select_specs as $select_key => $select_spec) {
-      $query_str="(SELECT '".escape_string($select_key)."'".(empty($query_str) ? 'AS select_key' : '');
+      $query_str="(SELECT '".$this->escape_string($select_key)."'".(empty($query_str) ? 'AS select_key' : '');
 
       foreach ($$outcolumns as $select_key => $select_spec) {
         $query_str=', '.(isset($select_spec['outcolumns'][$column_as])?$select_spec['outcolumns'] : 'NULL');

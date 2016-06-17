@@ -30,15 +30,15 @@ class Index extends Page{
     $this->view['title'] = 'sunmell的主页';
     $this->view['block'] = array(
       array(
-        'href'        => '//blog.sunsmell.cc',
-        'title'       => 'My Blog',
-        'description' => 'my blog powered by wordpress',
+        'href'        => Base::get_url_path("Info","Info"),
+        'title'       => 'Some Info Test',
+        'description' => 'Some Tested Info',
         'img'         => 'data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==', 
       ),
       array(
-        'href'        => Base::get_path("TestJsGame"),
+        'href'        => Base::get_url_path("TestJsGame"),
         'title'       => 'My Game In test',
-        'description' => 'my blog powered by wordpress',
+        'description' => 'My JS Game In Test',
         'img'         => 'data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==',
       ),
       array(
@@ -48,10 +48,10 @@ class Index extends Page{
         'img'         => 'data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==',
       ),
       array(
-        'href'        => '//blog.sunsmell.cc',
-        'title'       => 'My Blog',
-        'description' => 'my blog powered by wordpress',
-        'img'         => 'data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==',
+        'href'        => 'https://github.com/GitFuture',
+        'title'       => 'My GitHub Account',
+        'description' => 'almost all my codes are there',
+        'img'         => '/static/img/githublogo.jpg',
       ),
     );
     $this->view['carousel-item'] = array(

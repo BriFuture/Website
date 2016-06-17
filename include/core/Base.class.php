@@ -1,9 +1,10 @@
 <?php 
 /**
  * @author future <zhoujw@sunsmell.cc>
- * starttime: 04.xx
- * lastmodifytime: 05.18
- * filename: Base.class.php
+ * starttime:       04.xx
+ * lastmodifytime:  06.16
+ * filename:    Base.class.php
+ * description: the base of whole code or framework
  */
 if(!defined('VERSION')) {
   header('Location:/');
@@ -91,7 +92,6 @@ class Base {
     if($this->super_get(self::URL_LAYER_ACTION))
     {
       //需要将image单独出来，因为path不同
-      //后期需要将连接改到control层
       switch ($this->super_get(self::URL_LAYER_ACTION)) {
         case 'err':
           //转到错误页面
@@ -101,10 +101,10 @@ class Base {
           );
           $page->err($msg);
           break;
-        case 'util':
+        case 'util':  // 小工具
           # code...
           break;
-        case self::URL_LAYER_PAGE:
+        case self::URL_LAYER_VIEW:
           $page->dispatch(strtolower($this->super_get(self::URL_LAYER_PAGE)), strtolower($this->super_get(self::URL_LAYER_VIEW)));
           break;
         case 'ext':  //扩展
@@ -139,13 +139,14 @@ class Base {
   }
 
   /**
-   * 使用指定的URL格式返回路径
+   * 使用指定的URL格式返回站内的页面路径
    * @return url path
   */
-  public static function get_path($page, $view=null, $params=null) {
-    $options = new DbOptions();
-    $format = $options->get_option("path_format");
+  public static function get_url_path($page, $view=null, $params=null) {
+    $options = new Options();
+    $format = $options->get_option("url_path_format");
     $url = "";
+    //默认使用 URL_FORMAT_INDEX
     switch($format) {
       case self::URL_FORMAT_FAKE_STATIC:
         $url = "";
@@ -154,11 +155,18 @@ class Base {
         $url = "";
         break;
       case self::URL_FORMAT_SLASH:
-        $url = "";
+        $url = '/'.$page.(($view === null) ? '' : '/'.$view);
+        if($params !== null) {
+          $url.='?';
+          foreach ($params as $pname => $pvalue) {
+            $url.=$pname.'='.$pvalue.'&';
+          }
+          $url = substr($url, 0, -1);
+        }
         break;
       case self::URL_FORMAT_INDEX:
       default:
-        $url = "/index.php?action=page&page=".$page.(($view === null) ? "" : "&view=".$view);
+        $url = "/index.php?".self::URL_LAYER_ACTION."=".self::URL_LAYER_VIEW."&".self::URL_LAYER_PAGE."=".$page.(($view === null) ? "" : "&".self::URL_LAYER_VIEW."=".$view);
         break;
     }
     return $url;
@@ -255,6 +263,9 @@ class Base {
       }
     }
 
+    $options = new Options();
+    $options->preload_options();
+
   }
 
   /**
@@ -272,7 +283,7 @@ class Base {
   }
 
   /**
-   * 注册层
+   * 注册 layer
    */
   public function register_layer() {
 
@@ -468,6 +479,54 @@ class Base {
   public function get_html($string, $multiline=false) {
 
   }
+  /**
+   * date:0428
+   * 
+   * 用来输出html内容
+   * @param $type指定类型 为meta 或者link或者script或者raw
+   *        当$type为raw时，将$addition原样输出
+   * @param $addtion输出其它指定的信息
+  */
+  public function html_content($type, $addition) {
+    if($type === 'raw')
+    {
+      $content = $addition;
+    }
+    else
+    {
+      switch ($type) {
+        case 'js':
+          $content = '<script type="text/javascript" src="'.$addition['src'].'"></script>';
+          break;
+        case 'css':
+          $content = '<link rel="stylesheet" href="'.$addition['href'].'" />';
+          break;
+        // case 'script':
+        //   $content = '<script type="text/javascript" src="'.$addtion['src'].'"></script>';
+        //   // <script type="text/javascript" src="/js/index.js"></script>
+        //   break;
+        case 'meta':
+        case 'link':
+        // case 'img'://不直接使用地址，改用php绘制
+          $content = '<'.$type;
+          if(is_array($addition))
+            foreach ($addition as $key => $value) {
+              $content .= ' '.$key.'="'.$value.'" ';
+            }
+          $content .= $type.' />';
+          break;
+        case 'img':
+          $content = '<img';
+          if(is_array($addition))
+            foreach ($addition as $key => $value) {
+              $content .= ' '.$key.'="'.$value.'" ';
+            }
+          $content .= 'img />';
+          break;
+      }
+    } 
+    echo $content;
+  }
 
   /**
    * 过滤html
@@ -662,33 +721,6 @@ class Base {
   }
 
   /**
-   * 对数据库的数据进行缓存，缓存后直接读取某些数据
-   * 如果设置了$value，就更新$name的值
-   * @param  $name   变量名
-   * @param  $value  相应的值
-   */
-  public function opt($name, $value=null) {
-    global $options_cache;
-
-    //如果没有设置$value 就是取出相应的值
-    if(!isset($value) && isset($options_cache[$name]))
-    {
-      return $options_cache[$name];
-    }
-
-    $option = Factory::getObject('Options');
-    //设置相应的键值
-    if(isset($value))
-    {
-      $option->set_option($name, $value);
-    }
-
-    $options = $option->get_options(array($name));
-
-    return $options[$name];
-  }
-
-  /**
    * 输出调试信息
    * @param $var  需要调试的内容
    */
@@ -782,52 +814,4 @@ class Base {
     exit;
   }
 
-  /**
-   * date:0428
-   * 
-   * 用来输出html内容
-   * @param $type指定类型 为meta 或者link或者script或者raw
-   *        当$type为raw时，将$addition原样输出
-   * @param $addtion输出其它指定的信息
-  */
-  public function html_content($type, $addition) {
-    if($type === 'raw')
-    {
-      $content = $addition;
-    }
-    else
-    {
-      switch ($type) {
-        case 'js':
-          $content = '<script type="text/javascript" src="'.$addition['src'].'"></script>';
-          break;
-        case 'css':
-          $content = '<link rel="stylesheet" href="'.$addition['href'].'" />';
-          break;
-        // case 'script':
-        //   $content = '<script type="text/javascript" src="'.$addtion['src'].'"></script>';
-        //   // <script type="text/javascript" src="/js/index.js"></script>
-        //   break;
-        case 'meta':
-        case 'link':
-        // case 'img'://不直接使用地址，改用php绘制
-          $content = '<'.$type;
-          if(is_array($addition))
-            foreach ($addition as $key => $value) {
-              $content .= ' '.$key.'="'.$value.'" ';
-            }
-          $content .= $type.' />';
-          break;
-        case 'img':
-          $content = '<img';
-          if(is_array($addition))
-            foreach ($addition as $key => $value) {
-              $content .= ' '.$key.'="'.$value.'" ';
-            }
-          $content .= 'img />';
-          break;
-      }
-    } 
-    echo $content;
-  }
 }

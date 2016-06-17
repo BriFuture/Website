@@ -35,7 +35,7 @@ class Options {
 
   	if(!$this->options_cache)
   	{
-  		$this->load_options_result(array());
+  		$this->load_option_results(array());
   	}
   }
 
@@ -45,21 +45,14 @@ class Options {
   public function preload_options() {
   	if(!isset($this->options_loaded) || !$this->options_loaded)  //没有加载option
   	{
-  		$select_specs = array(
-  			'options'	=> array(
-  				'columns'    => array('title', 'content'),
-  				'source'	 	 => 'options',
-  				'arraykey' 	 => 'title',
-  				'arrayvalue' => 'content',
-  				),
-  			'time'  	=> array( //读取数据库时间
-  				'columns'		 => array('title' => "'db_time'", 'content' => 'UNIX_TIMESTAMP(NOW())'),
-  				'arraykey'   => 'title',
-  				'arrayvalue' => 'content',
-  				),
-  		);
+      $select_spec = array(
+        'columns'    => array('name', 'value'),
+        'source'     => 'options',
+        'arraykey'   => 'name',
+        'arrayvalue' => 'value',
+      );
       $db = Db::getInstance();
-  		$this->load_options_results($db->multi_select($select_specs));
+  		$this->load_option_results($db->single_select($select_spec));
   	}
   }
 	
@@ -68,7 +61,7 @@ class Options {
    * 将所有结果加载到cache中
    * @param  $results  结果集
    */  
-  public function load_options_results($results) {
+  public function load_option_results($results) {
   	foreach($results as $result)
     {
   		foreach($result as $name => $value)
@@ -88,7 +81,8 @@ class Options {
   public function set_option($name, $value, $todatabase=true) {
   	if($todatabase && isset($value))
     {
-
+      $dbOptions = new DbOption();
+      $dbOptions->set_option();
     }
 
   }
@@ -115,8 +109,11 @@ class Options {
   	);
 
   	if(isset($fixed_defaults[$name]))
-  		$value = $fixed_defaults[$name]
+    {
+  		$value = $fixed_defaults[$name];
+    }
   	else
+    {
   		switch ($name) {
   			case 'value':
   				# code...
@@ -126,6 +123,34 @@ class Options {
   				# code...
   				break;
   		}
+    }
+  }
+
+  /**
+   * 对数据库的数据进行缓存，缓存后直接读取某些数据
+   * 如果设置了$value，就更新$name的值
+   * @param  $name   变量名
+   * @param  $value  相应的值
+   */
+  public function opt($name, $value=null) {
+    global $options_cache;
+
+    //如果没有设置$value 就是取出相应的值
+    if(!isset($value) && isset($options_cache[$name]))
+    {
+      return $options_cache[$name];
+    }
+
+    $option = new Options();
+    //设置相应的键值
+    if(isset($value))
+    {
+      $option->set_option($name, $value);
+    }
+
+    $options = $option->get_options(array($name));
+
+    return $options[$name];
   }
 	
 }
