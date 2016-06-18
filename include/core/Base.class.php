@@ -37,7 +37,7 @@ class Base {
   /**
    * url的query关键字
    */
-  const URL_LAYER_ACTION = 'action';
+  const URL_LAYER_ACTION = 'act';
   const URL_LAYER_PAGE   = 'page';
   const URL_LAYER_VIEW   = 'view';
   const URL_LAYER_CAT    = 'cat';
@@ -105,15 +105,15 @@ class Base {
           # code...
           break;
         case self::URL_LAYER_VIEW:
-          $page->dispatch(strtolower($this->super_get(self::URL_LAYER_PAGE)), strtolower($this->super_get(self::URL_LAYER_VIEW)));
+          $page->dispatch($this->super_get(self::URL_LAYER_PAGE), $this->super_get(self::URL_LAYER_VIEW));
           break;
-        case 'ext':  //扩展
-          $cat = $this->super_get(self::URL_LAYER_CAT);
-          if(is_dir($cat) && file_exists($cat.'/index.php'))
-          {
-            include $cat.'/index.php';
-          }
-          break;  
+        // case 'ext':  //扩展
+        //   $cat = $this->super_get(self::URL_LAYER_CAT);
+        //   if(is_dir($cat) && file_exists($cat.'/index.php'))
+        //   {
+        //     include $cat.'/index.php';
+        //   }
+        //   break;
         case 'test':
           if(DEBUG_MODE)
           {
@@ -140,6 +140,8 @@ class Base {
 
   /**
    * 使用指定的URL格式返回站内的页面路径
+   * @param  $page  页面
+   * @param  $view  显示
    * @return url path
   */
   public static function get_url_path($page, $view=null, $params=null) {
@@ -166,7 +168,12 @@ class Base {
         break;
       case self::URL_FORMAT_INDEX:
       default:
-        $url = "/index.php?".self::URL_LAYER_ACTION."=".self::URL_LAYER_VIEW."&".self::URL_LAYER_PAGE."=".$page.(($view === null) ? "" : "&".self::URL_LAYER_VIEW."=".$view);
+        $url = '/index.php?'.self::URL_LAYER_ACTION.'='.self::URL_LAYER_VIEW.'&'.self::URL_LAYER_PAGE.'='.$page.(($view === null) ? '' : '&'.self::URL_LAYER_VIEW.'='.$view);
+        if($params !== null) {
+          foreach ($params as $pname => $pvalue) {
+            $url.='&'.$pname.'='.$pvalue;
+          }
+        }
         break;
     }
     return $url;
