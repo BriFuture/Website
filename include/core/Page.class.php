@@ -42,7 +42,8 @@ class Page {
     }
     else
     {
-      $this->err();
+      $err = new Err(array('errcode' => 404));
+      $err->view_err();
     }
   }
 
@@ -54,13 +55,6 @@ class Page {
     $this->view['avatar'] = $TEST['avatar'];
     $this->view['login']  = 'test';
     $this->view['reg']  = 'test';
-  }
-  /**
-   * 由于dispath使用了该函数，所以并不直接将该函数去除
-   */
-  public function err($msg=null) {
-    $err = new Err();
-    $err->view_err($msg);
   }
 
 
@@ -94,7 +88,8 @@ class Page {
     }
     else
     {
-      $this->err();
+      $err = new Err(array('errcode' => 404));
+      $err->view_err();
     }
   }
 

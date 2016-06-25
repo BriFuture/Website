@@ -13,22 +13,25 @@ if(!defined('VERSION')) {
 }
 
 class Err extends Page{
-  // public $view = array();
-  // private $msg;
+  private $msg;
+
+  public function Err($msg=null) {
+    $this->msg = $msg;
+  }
 
   /**
    * 默认显示的err
    * @param  $msg  额外的信息
    */
-  public function view_err($msg=null) {
+  public function view_err() {
     //如果设置了errcode，直接显示对应的http码页面
-    if(isset($msg['errcode']))
+    if(isset($this->msg['errcode']))
     {
-      $this->view['errcode'] = $msg['errcode'];
+      $this->view['errcode'] = $this->msg['errcode'];
     }
-    elseif(isset($msg) && !isset($msg['errcode']))
+    elseif(isset($this->msg) && !isset($this->msg['errcode']))
     {
-      $this->view['msg'] = $msg;
+      $this->view['msg'] = $this->msg;
       $this->view['errcode'] = 0;
     }
     else
@@ -38,8 +41,9 @@ class Err extends Page{
 
     if(isset($this->view['errcode']))
     {
-      $this->err_header_ouptut($this->view['errcode']);
+      $this->err_header_ouptut();
     }
+    //显示页面
     $this->render();
   }
 
@@ -47,8 +51,8 @@ class Err extends Page{
    * 输出网页头部
    * @param  $errcode  错误码
    */
-  function err_header_ouptut($errcode) {
-    switch ($errcode) {
+  function err_header_ouptut() {
+    switch ($this->view['errcode']) {
       case '401':
         header("HTTP/1.0 401 Unauthorized");
         break;
@@ -59,7 +63,6 @@ class Err extends Page{
         header("HTTP/1.0 500 Internal Server Error");
         break;
       case '404':
-      default:
         header("HTTP/1.0 404 Not Found");
         break;
     }
@@ -69,25 +72,23 @@ class Err extends Page{
    * 输出head标题, 封装了err_title_withnum()
    * @param  $errcode  错误码或者标题
    */
-  function err_title_output($errcode) {
+  function err_title_output() {
     // global $msg;
-    if(!isset($msg) || isset($msg['errcode']))
+    if(!isset($this->msg) || isset($this->msg['errcode']))
     {
       //根据错误码输出页面head标题
-       switch ($errcode) 
-      {
+       switch ($this->view['errcode']) {
         case '401':
-          echo '401 error 没有权限访问';
+          echo '没有权限访问';
           break;
         case '403':
-          echo '403 error 没有权限访问';
+          echo '没有权限访问';
           break;
         case '500':
-          echo '500 Internal Server Error';
+          echo 'Internal Server Error';
           break;
         case '404':
-        // default:
-          echo '404 页面找不到了';
+          echo '页面找不到了';
           break;
         default:
           echo '未知错误';
@@ -95,13 +96,13 @@ class Err extends Page{
     }
     else
     {
-      if(!isset($msg['title']) || is_null($msg['title']))
+      if(!isset($this->msg['title']) || is_null($this->msg['title']))
       {
         echo '未知的错误';
       }
       else
       {
-        echo $msg['title'];
+        echo $this->msg['title'];
       }
     }
   }
