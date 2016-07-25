@@ -25,7 +25,7 @@ class DbOptions {
   }
 
   /**
-   * 添加数据库中的option 选项 
+   * 添加数据库中的 option 选项 
    * @param  $name  option 的名称
    * @param  $value  要设置的值
    * @param  $autoload  bool  是否要自动加载
@@ -51,13 +51,15 @@ class DbOptions {
       $this->get_all_options();
     }
 
+    // 更新 option
     if(array_key_exists($name, $this->options)) 
     {
       $this->update($name, $value, $autoload);
       return $this->db->affected_rows();
     }
     else
-    {
+    { 
+      // 创建 option
       $this->create($name, $value, $autoload);
       return $this->db->last_insert_id();
     }
@@ -106,6 +108,7 @@ class DbOptions {
   public function get_column_value($column) {
 
   }
+
   /**
    * 读取数据库中的options的所有值
    * @param  $name  option 的名称

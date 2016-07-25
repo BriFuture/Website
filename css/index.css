@@ -42,6 +42,16 @@
 
 }
 
+.bgm {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+.bgm audio{
+  /*clear:both;*/
+  display:block;
+  margin: auto;
+}
+
 /*very large 
 do not consider now*/
 @media (min-width: 1200px) {

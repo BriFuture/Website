@@ -26,6 +26,7 @@ if(!defined('VERSION')) {
   <link rel="stylesheet" type="text/css" href="/css/header-footer.css" />
   <link rel="stylesheet" type="text/css" href="/css/index.css" />
   <script type="text/javascript" src="/js/index.js"></script>
+  <script type="text/javascript" src="/js/header-footer.js"></script>
 </head>
 <body>
   <?php include $this->view['header']; ?>
@@ -34,8 +35,11 @@ if(!defined('VERSION')) {
     <!-- Indicators -->
     <ol class="carousel-indicators">
       <li data-target="#carousel-index" data-slide-to="0" class="active"></li>
-      <li data-target="#carousel-index" data-slide-to="1"></li>
-      <li data-target="#carousel-index" data-slide-to="2"></li>
+        <!-- <li data-target="#carousel-index" data-slide-to="1"></li> -->
+        <!-- <li data-target="#carousel-index" data-slide-to="2"></li> -->
+      <?php  for($i = 1; $i < count($this->view['carousel-item']); $i++):?>
+        <li data-target="#carousel-index" data-slide-to="<?php echo $i ?>"></li>
+      <?php endfor; ?>
     </ol>
     <!-- Wrapper for slides -->
     <div class="carousel-inner" role="listbox">
@@ -88,6 +92,11 @@ if(!defined('VERSION')) {
       <p class="text-left">该网站还有很多东西没有完工！<br /></p>
     </div>  
     <?php endif;?>
+    <div class="bgm">
+      <audio src="/static/music/inuyasha_bgm.mp3" controls="controls" autoplay="autoplay" loop="loop">
+        您的浏览器不支持 audio 标签。
+      </audio>
+    </div>
   </div>
   <?php include $this->view['footer']; ?> 
 </body>

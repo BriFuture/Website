@@ -19,8 +19,9 @@ if(!defined('VERSION')) {
         <!-- <span class="title" >个人主页</span> -->
           <div class="navbar-right">
             <div class="btn-group navbar-btn-group btn-group-lg" role="group">
-              <button type="button" class="btn btn-primary" disabled="disabled"><?php echo $this->view['login'] ?></button>
-              <button type="button" class="btn btn-primary" disabled="disabled"><?php echo $this->view['reg']?></button>
+              <!-- <button type="button" class="btn btn-primary" disabled="disabled"><?php echo $this->view['login']; ?></button> -->
+              <!-- <button type="button" class="btn btn-primary" disabled="disabled"><?php echo $this->view['reg']; ?></button> -->
+              <a href="<?php echo Base::get_url_path("AdminConsole"); ?>" type="button" class="btn btn-primary" role="buttun"><?php echo "console"; ?></a>
             </div>
           </div>
           <a href="#" class="navbar-right">

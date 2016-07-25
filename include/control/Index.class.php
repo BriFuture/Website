@@ -65,8 +65,8 @@ class Index extends Page{
         'description' => 'sword art online', 
         ),
       array(
-        'src'         => '/static/img/sword_art_online_2.jpg', 
-        'description' => 'sword art online', 
+        'src'         => '/static/img/worst_one.jpg', 
+        'description' => '落第骑士的英雄谭', 
         ),
       );
     $this->render();
