@@ -23,7 +23,7 @@ class Err extends Page{
    * 默认显示的err
    * @param  $msg  额外的信息
    */
-  public function view_err() {
+  public function render() {
     //如果设置了errcode，直接显示对应的http码页面
     if(isset($this->msg['errcode']))
     {
@@ -43,8 +43,8 @@ class Err extends Page{
     {
       $this->err_header_ouptut();
     }
-    //显示页面
-    $this->render();
+    //包含页面文件
+    $this->inc(__CLASS__);
   }
 
   /**
@@ -74,8 +74,7 @@ class Err extends Page{
    */
   function err_title_output() {
     // global $msg;
-    if(!isset($this->msg) || isset($this->msg['errcode']))
-    {
+    if(!isset($this->msg) || isset($this->msg['errcode'])) {
       //根据错误码输出页面head标题
        switch ($this->view['errcode']) {
         case '401':
@@ -94,14 +93,11 @@ class Err extends Page{
           echo '未知错误';
       }
     }
-    else
-    {
-      if(!isset($this->msg['title']) || is_null($this->msg['title']))
-      {
+    else {
+      if(!isset($this->msg['title']) || is_null($this->msg['title'])) {
         echo '未知的错误';
       }
-      else
-      {
+      else {
         echo $this->msg['title'];
       }
     }

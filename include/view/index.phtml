@@ -30,63 +30,76 @@ if(!defined('VERSION')) {
 </head>
 <body>
   <?php include $this->view['header']; ?>
-  <!-- <div class="jumbotron"> -->
-  <div id="carousel-index" class="carousel slide" data-ride="carousel">
-    <!-- Indicators -->
-    <ol class="carousel-indicators">
-      <li data-target="#carousel-index" data-slide-to="0" class="active"></li>
-        <!-- <li data-target="#carousel-index" data-slide-to="1"></li> -->
-        <!-- <li data-target="#carousel-index" data-slide-to="2"></li> -->
-      <?php  for($i = 1; $i < count($this->view['carousel-item']); $i++):?>
-        <li data-target="#carousel-index" data-slide-to="<?php echo $i ?>"></li>
-      <?php endfor; ?>
-    </ol>
-    <!-- Wrapper for slides -->
-    <div class="carousel-inner" role="listbox">
-      <?php foreach ($this->view['carousel-item'] as $item) : ?>
-      <div class="item <?php if(isset($item['active']) && $item['active']) echo 'active'; ?>">
-        <img src="<?php echo $item['src'] ?>" alt="图片1">
-        <div class="carousel-caption">
-          <?php echo $item['description'] ?>
+  <div class="">
+    <div id="carousel-index" class="carousel slide" data-ride="carousel">
+      <!-- Indicators -->
+      <ol class="carousel-indicators">
+        <li data-target="#carousel-index" data-slide-to="0" class="active"></li>
+          <!-- <li data-target="#carousel-index" data-slide-to="1"></li> -->
+          <!-- <li data-target="#carousel-index" data-slide-to="2"></li> -->
+        <?php  for($i = 1; $i < count($this->view['carousel-item']); $i++):?>
+          <li data-target="#carousel-index" data-slide-to="<?php echo $i ?>"></li>
+        <?php endfor; ?>
+      </ol>
+      <!-- Wrapper for slides -->
+      <div class="carousel-inner" role="listbox">
+        <?php $active=true; 
+              foreach ($this->view['carousel-item'] as $item) : 
+        ?>
+        <div class="item <?php if($active) echo 'active'; $active=false; ?>">
+          <img src="<?php echo $item['img_path']; ?>" alt="图片1">
+          <div class="carousel-caption">
+            <?php echo $item['description'] ?>
+          </div>
         </div>
+        <?php endforeach; ?>
       </div>
-      <?php endforeach; ?>
+      <!-- Controls -->
+      <a class="left carousel-control" href="#carousel-index" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="right carousel-control" href="#carousel-index" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
     </div>
-    <!-- Controls -->
-    <a class="left carousel-control" href="#carousel-index" role="button" data-slide="prev">
-      <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-      <span class="sr-only">Previous</span>
-    </a>
-    <a class="right carousel-control" href="#carousel-index" role="button" data-slide="next">
-      <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-      <span class="sr-only">Next</span>
-    </a>
   </div>
-  <div class="container-fluid marketing">
-    <div class="row">
+  <div class="container">
+    <div class="container-fluid marketing">
+      <?php $counti=0 ?>
       <?php  foreach($this->view['block'] as $block): ?>
-      <div class="col-xs-6 col-xs-offset-3 col-link-item visible-xs-block">
-      <!-- vertical arrangement -->
-        <a class="" href="<?php echo $block['href'];?>">
-          <div class="">  
-            <img src="<?php echo $block['img']; ?>" class="img-thumbnail">
-            <h2><?php echo $block['title']; ?></h2>
-            <p><?php echo $block['description']; ?></p>
-          </div>
-        </a>
+      <?php  if($counti % 3 == 0): ?>
+      <div class="row">
+      <?php endif; ?>
+        <div class="col-xs-6 col-xs-offset-3 col-link-item visible-xs-block">
+        <!-- vertical arrangement -->
+          <a class="" href="<?php echo $block['href'];?>">
+            <div class="">  
+              <img src="<?php echo $block['img']; ?>" class="img-thumbnail">
+              <h2><?php echo $block['title']; ?></h2>
+              <p><?php echo $block['description']; ?></p>
+            </div>
+          </a>
+        </div>
+        <div class="col-sm-3 <?php  if($counti%3 != 0) echo "col-sm-offset-1"; ?> col-link-item hidden-xs">
+        <!-- horizontal arrangemet first and remains vertical -->
+          <a class="" href="<?php echo $block['href'];?>">
+            <div class="">  
+              <img src="<?php echo $block['img']; ?>" class="img-thumbnail">
+              <h2><?php echo $block['title']; ?></h2>
+              <p><?php echo $block['description']; ?></p>
+            </div>
+          </a>
+        </div>
+      <?php  if($counti % 3 == 2 || $counti == count($this->view['block']) - 1): ?>
       </div>
-      <div class="col-sm-3 col-link-item hidden-xs">
-      <!-- horizontal arrangemet first and remains vertical -->
-        <a class="" href="<?php echo $block['href'];?>">
-          <div class="">  
-            <img src="<?php echo $block['img']; ?>" class="img-thumbnail">
-            <h2><?php echo $block['title']; ?></h2>
-            <p><?php echo $block['description']; ?></p>
-          </div>
-        </a>
-      </div>
+      <?php endif; ?>
+      <?php $counti++; ?>
       <?php endforeach; ?>
-    </div>
+    </div> 
+  </div> 
+  <div class="container-fluid">
     <?php if(DEBUG_MODE):?>
     <div class="alert alert-warning">
       <p class="text-left">该网站还有很多东西没有完工！<br /></p>

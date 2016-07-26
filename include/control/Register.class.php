@@ -13,6 +13,6 @@ if(!defined('VERSION')) {
 class Register extends Page {
   
   public function view_register($msg) {
-    $this->render();
+    $this->inc(__CLASS__);
   }
 }

@@ -11,10 +11,9 @@ if(!defined('VERSION')) {
 }
 
 class DbCookies {
-
-  const COLUMNS=['cookieid', 'created', 'createip', 'updated', 'updateip'];
+  // const COLUMNS=['cookieid', 'created', 'createip', 'updated', 'updateip'];
+  // const TABLE_NAME = 'cookies';
   private $db;
-  const TABLE_NAME = 'cookies';
 
   public function __construct() {
     $this->db = Db::getInstance();
@@ -29,7 +28,7 @@ class DbCookies {
   public function cookie_exists($cookieid) {
     $query  = 'SELECT COUNT(*) FROM cookies WHERE cookieid=#';
     $result = $this->db->query($query, $cookieid);
-    return $this->db->read_one_value($result) > 0;
+    return $this->db->get_one_value($result) > 0;
   }
 
   /**
@@ -38,12 +37,12 @@ class DbCookies {
    */
   public function create_cookie($ipaddr) {
     for($attemp = 0; $attemp < 10; $attemp++) {
-      $cookieid = Base::random_bigint();
+      $cookieid = Db::random_bigint();
 
       if($this->cookie_exists($cookieid))
         continue;
       //COALESEC 当IP地址为空时返回0
-      $query = 'INSERT INTO cookies (cookieid, created, createip) '.'VALUES (#, NOW(), COALESEC(INET_ATON($), 0)';
+      $query = 'INSERT INTO cookies (cookieid, created, createip) VALUES (#, NOW(), COALESCE(INET_ATON($), 0))';
       
       $this->db->query($query, $cookieid, $ipaddr);
       return $cookieid;
@@ -57,7 +56,7 @@ class DbCookies {
    * @param  $cookieid  cookieid
    * @param  $ipaddr    ip地址
    */
-  public update_cookie($cookieid, $ipaddr) {
+  public function update_cookie($cookieid, $ipaddr) {
     $query = 'UPDATE cookies SET updated=NOW(), updateip=COALESCE(INET_ATON($), 0) WHERE cookieid=#';
     $this->db->query($query, $ipaddr, $cookieid);
   }

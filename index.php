@@ -23,10 +23,9 @@ require_once INCLUDE_PATH.'Factory.class.php';
 //注册函数
 Factory::register();
 //初始化配置php
-$base = new Base();
-$base->initialize_php();
+Base::initialize_php();
 //打开会话
 $users = new Users();
 $users->start_session();
 //分发
-$base->dispatch();
+Base::dispatch();

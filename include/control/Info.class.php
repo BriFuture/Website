@@ -19,8 +19,8 @@ class Info extends Page{
    * @param  $call 渲染页面需要的不同逻辑
    * @param  $msg  附加的信息
    */
-  public function view_info($msg=null) {
-    $this->render();
+  public function render($msg=null) {
+    $this->inc(__CLASS__);
   }
 
   public function view_info_content($view) {

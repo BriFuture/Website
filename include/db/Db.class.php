@@ -72,7 +72,7 @@ class Db implements DbImpl{
   private function connect($fail_handle) {
     if($this->persistent)
     {
-      $db = new mysqli('P:'.HOST, USER, PASSWD, DATABASE);
+      $db = new mysqli('P:'.HOST, USER, PASSWD, DATABASE); //持久化连接
     }
     else
     {
@@ -116,7 +116,6 @@ class Db implements DbImpl{
       $errors = 'Database '.htmlspecialchars($type.' errno '.$errno).'<p>'.nl2br(htmlspecialchars($error."\n".$query)).'</p>';
       $base   = new Base();
       $base->fatal_error($errors, '数据库错误');
-      // exit();
     }
   }
 
@@ -181,7 +180,6 @@ class Db implements DbImpl{
         $gotcolumns = $result->field_count;
       }
       //将查询的语句和得到的结果记录
-      // 
     }
     else
     {
@@ -303,7 +301,7 @@ class Db implements DbImpl{
       if(!is_numeric($position))
       {
         $base = new Base();
-        $base->fatal_error('Insufficient parameters in query: '. $query);
+        $base->fatal_error('Insufficient parameters in query （查询语句参数不足）: '. $query);
       }
       //换成mysql语句
       $value = $this->argument_to_mysql($arguments[$argument], $alwaysquote);

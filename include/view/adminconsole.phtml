@@ -30,7 +30,7 @@ if(!defined('VERSION')) {
 </head>
 <body>
   <?php include $this->view['header']; ?>
-  <div >
+  <div class="jumbotron">
     <table border="1" class="table">
     <tr>
       <th><p class="text-center">序号</p></th>
@@ -44,6 +44,26 @@ if(!defined('VERSION')) {
         <td><p class="text-center"><?php echo $option['name']; ?></p></td>
         <td><p class="text-center"><?php echo $option['value']; ?></p></td>
         <td><p class="text-center"><?php echo $option['autoload']; ?></p></td>
+      </tr>
+    <?php endforeach; ?>
+    </table>
+
+    <br />
+    <table border="1" class="table">
+    <tr>
+      <th><p class="text-center">序号</p></th>
+      <th><p class="text-center">name</p></th>
+      <th><p class="text-center">path</p></th>
+      <th><p class="text-center">group</p></th>
+      <th><p class="text-center">description</p></th>
+    </tr>
+    <?php foreach ($this->view['images'] as $image): ?>
+      <tr>
+        <td><p class="text-center"><?php echo $image['img_id']; ?></p></td>
+        <td><p class="text-center"><?php echo $image['img_name']; ?></p></td>
+        <td><p class="text-center"><?php echo $image['img_path']; ?></p></td>
+        <td><p class="text-center"><?php echo $image['img_group']; ?></p></td>
+        <td><p class="text-center"><?php echo $image['description']; ?></p></td>
       </tr>
     <?php endforeach; ?>
     </table>

@@ -1,6 +1,11 @@
 更新说明
 ====
 
+### 7 月 26 日
+- 将 control 层的 view_xxx() 方法换成了 render() 方法。每个 control 层的类对应一个页面。
+- 将 view 层的 index.phtml 显示方式换成了从数据库中读取图片信息并显示。更换了 Block 的显示方法。
+- 将 Base.class.php 中的一些方法改成了静态方法。
+
 ### 6 月 16 日
 
 - 将代码中遗留的 PUBLIC_PATH 常量改成了 INCLUDE_PATH。

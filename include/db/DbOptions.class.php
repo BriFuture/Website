@@ -110,7 +110,7 @@ class DbOptions {
   }
 
   /**
-   * 读取数据库中的options的所有值
+   * 读取数据库中的 options 的所有值
    * @param  $name  option 的名称
    * @param  $value  要设置的值
    * @return  数组

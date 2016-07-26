@@ -17,19 +17,19 @@ class Cookie {
   /**
    * 如果cookie中有相应的值就返回该值，否则返回空
    */
-  public function get_cookieid() {
+  public static function get_cookieid() {
     return isset($_COOKIE[self::ID]) ? $_COOKIE[self::ID] :null;
   } 
 
   /**
    * 创建新cookie
    */
-  public function create_cookie() {
-    $cookieid = $this->get_cookieid();
-    $dbCookie = new DbCookie();
+  public static function create_cookie() {
+    $cookieid = self::get_cookieid();
+    $dbCookies = new DbCookies();
 
-    if(!isset($cookieid) || !$dbCookie->cookie_exists($cookieid))
-      $cookieid = $dbCookie->create_cookie(Base::get_remote_ip());
+    if(!isset($cookieid) || !$dbCookies->cookie_exists($cookieid))
+      $cookieid = $dbCookies->create_cookie(Base::get_remote_ip());
 
     setcookie(self::ID, $cookieid, time()+86400*365, '/', COOKIE_DOMAIN);
     $_COOKIE[self::ID] = $cookieid;
@@ -42,7 +42,7 @@ class Cookie {
    * @param  $cookieid  客户端的cookie id
    * @param  $action    相应的操作
    */
-  public function cookie_report_action($cookieid, $action) {
+  public static function cookie_report_action($cookieid, $action) {
     $dbCookie = new DbCookie();
     $dbCookie->update_cookie($cookieid, Base::get_remote_ip());
   }

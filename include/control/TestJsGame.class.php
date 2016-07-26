@@ -13,6 +13,6 @@ if(!defined('VERSION')) {
 class TestJsGame extends Page{
   public function view_testjsgame() {
     $this->view['title'] = "Test JS Game";
-    $this->render();
+    $this->inc(__CLASS__);
   }
 }

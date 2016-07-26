@@ -14,47 +14,50 @@ if(!defined('VERSION')) {
 /**
  * 每一个子类都对应着一个页面或者图片
  */
-class Page {
+abstract class Page {
   /**
    * 用于传递需要显示的数据
    */
   public $view = array();
 
+  public function __construct() {
+    Cookie::create_cookie(Base::get_remote_ip());
+  }
   /**
    * 找到相应的包含html的文件并引用（渲染网页）
    * 如果没有指定名字，使用最后一个调用该函数的函数名
    * @param  $name  引用的文件名
    */
-  public function render() {
-    $trace = debug_backtrace();
-    //移去栈顶的元素,返回的是被移除的元素
-    array_shift($trace);
-    // var_dump($trace);
-    //找到最后一个调用该函数的类的名称
-    $name = strtolower($trace[0]['class']);
-    // print_r($trace[0]);
+  /*public function render($name=null) {
+    // $trace = debug_backtrace();
+    // array_shift($trace); //移去栈顶的元素,返回被移除的元素
+    // // var_dump($trace);
+    // $name = strtolower($trace[0]['class']); //找到最后一个调用该函数的类的名称
+    
+    // Cookie::create_cookie();
     $this->set_reuse();
     $file = VIEW_PATH.$name.'.phtml';
-    // echo $file;
-    if(file_exists($file))
-    {
+    if (file_exists($file)) {
       include $file;
     }
-    else
-    {
+    else {
       $err = new Err(array('errcode' => 404));
       $err->view_err();
     }
-  }
+  }*/
+  abstract public function render();
 
-  public function set_reuse() {
+
+  protected function inc($name) {
     require INCLUDE_PATH.'const.php';
     $this->view['header'] = $URLS['body-header'];
-    $this->view['footer'] = $URLS['body-footer'];
+    // $this->view['footer'] = $URLS['body-footer'];
+    $this->view['footer'] = VIEW_PATH.'footer-thank.phtml';
     $this->view['logo']   = $URLS['logo'];
     $this->view['avatar'] = $TEST['avatar'];
-    $this->view['login']  = 'test';
-    $this->view['reg']  = 'test';
+    $this->view['login']  = 'login';
+    $this->view['reg']  = 'no-reg';
+    include VIEW_PATH.strtolower($name).'.phtml';
   }
 
 
@@ -62,7 +65,7 @@ class Page {
    * 
    * @return  返回格式化的信息
    */
-  public function format_msg($content, $title) {
+  public static function format_msg($content, $title) {
 
   }
   
@@ -71,7 +74,7 @@ class Page {
    * @param  $file  文件名
    * @param  $view  需要显示的逻辑
    */
-  public function dispatch($file='Index', $view='index') {
+  public static function dispatch($file='Index') {
     //首字母大写，将 Base::get_url() 重写之后不需要首字母大写了。
     // $classname = ucwords(str_replace('.php', '', strtolower($file)));
     $classname = str_replace('.php', '', $file);
@@ -79,17 +82,13 @@ class Page {
     if(class_exists($classname))
     {
       $class  = new $classname();
-      $method = strtolower('view_'. $view);
-      if(!method_exists($classname, $method))
-      {
-        $method = 'view_'.strtolower($classname);
-      }
-      $class->$method();
+      
+      $class->render();
     }
     else
     {
       $err = new Err(array('errcode' => 404));
-      $err->view_err();
+      $err->render();
     }
   }
 

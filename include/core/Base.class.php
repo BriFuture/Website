@@ -38,19 +38,18 @@ class Base {
    * url的query关键字
    */
   const URL_LAYER_ACTION = 'act';
-  const URL_LAYER_PAGE   = 'page';
-  const URL_LAYER_VIEW   = 'view';
+  const URL_LAYER_PAGE   = 'view';
   const URL_LAYER_CAT    = 'cat';
 
   /**
    * 是否暂停报告事件的锁
    */
-  private $suspend;
+  private static $suspend;
 
   /**
    * 所有模块
    */
-  private $modules;
+  private static $modules;
 
   public function __construct() {
 
@@ -78,63 +77,58 @@ class Base {
   /**
    * 分发操作
    */
-  public function dispatch() {
-    //界面
-    $page = new Page();
-
+  public static function dispatch() {
     //跳转页面
-    if ($this->super_post_text('ajax')) {
+    if (self::super_post_text('ajax')) {
       //如果是ajax请求
       //将请求转发给ajax
 
       return;
     }
-    if($this->super_get(self::URL_LAYER_ACTION))
+    if(self::super_get(self::URL_LAYER_ACTION))
     {
-      //需要将image单独出来，因为path不同
-      switch ($this->super_get(self::URL_LAYER_ACTION)) {
+      switch (self::super_get(self::URL_LAYER_ACTION)) {
         case 'err':
           //转到错误页面
-          $err = $this->super_get('err');
+          $err = self::super_get('err');
           $msg = array(
             'errcode' => $err,
           );
-          $page->err($msg);
+          Page::dispatch('Err');
           break;
         case 'util':  // 小工具
           # code...
           break;
-        case self::URL_LAYER_VIEW:
-          $page->dispatch($this->super_get(self::URL_LAYER_PAGE), $this->super_get(self::URL_LAYER_VIEW));
+        case self::URL_LAYER_PAGE:
+          Page::dispatch(self::super_get(self::URL_LAYER_PAGE));
           break;
         // case 'ext':  //扩展
-        //   $cat = $this->super_get(self::URL_LAYER_CAT);
+        //   $cat = self::super_get(self::URL_LAYER_CAT);
         //   if(is_dir($cat) && file_exists($cat.'/index.php'))
         //   {
         //     include $cat.'/index.php';
         //   }
         //   break;
         case 'test':
-          if(DEBUG_MODE)
-          {
-            $page = VIEW_PATH.$this->super_get(self::URL_LAYER_PAGE).'.phtml';
+          if (DEBUG_MODE) {
+            $page = VIEW_PATH.self::super_get(self::URL_LAYER_PAGE).'.phtml';
             include $page;
           }
-          else
-          {
+          else {
             //找不到页面
             $msg = array('errcode' => 404);
-            $page->err($msg);
+            $err = new Err($msg);
+            $err->render();
           }
           break;
         default:
-          $page->dispatch('err');
+          Page::dispatch('err');
           break;
       }
     }
     else
     {
-      $page->dispatch();
+      Page::dispatch();
     }
   }
 
@@ -168,7 +162,7 @@ class Base {
         break;
       case self::URL_FORMAT_INDEX:
       default:
-        $url = '/index.php?'.self::URL_LAYER_ACTION.'='.self::URL_LAYER_VIEW.'&'.self::URL_LAYER_PAGE.'='.$page.(($view === null) ? '' : '&'.self::URL_LAYER_VIEW.'='.$view);
+        $url = '/index.php?'.self::URL_LAYER_ACTION.'='.self::URL_LAYER_PAGE.'&'.self::URL_LAYER_PAGE.'='.$page;
         if($params !== null) {
           foreach ($params as $pname => $pvalue) {
             $url.='&'.$pname.'='.$pvalue;
@@ -229,9 +223,9 @@ class Base {
    *      true  当前php版本较低，无法运行
    *      false 可以运行
    */
-  public function php_version_below($version) {
-    $minphp  = $this->version_to_float($version);
-    $thisphp = $this->version_to_float(phpversion());
+  public static function php_version_below($version) {
+    $minphp  = self::version_to_float($version);
+    $thisphp = self::version_to_float(phpversion());
 
     return $minphp && $thisphp && ($minphp > $thisphp); 
   }
@@ -239,9 +233,9 @@ class Base {
   /**
    * 初始化php
    */
-  public function initialize_php() {
-    if($this->php_version_below('5.4.0'))
-      $this->fatal_error('需要php 5.4.0或之后的版本','php版本过低');
+  public static function initialize_php() {
+    if(self::php_version_below('5.4.0'))
+      self::fatal_error('需要php 5.4.0或之后的版本','php版本过低');
     //设置错误级别
     error_reporting(E_ALL);
     //try 关闭魔术引号
@@ -263,7 +257,7 @@ class Base {
         if(isset(${$check_array}) && is_array(${$check_array}))
           foreach ($check_array as $check_key => $check_value) {
             if(isset($key_protect[$check_key]))
-              $this->fatal_error('超全局变量不允许覆盖');
+              self::fatal_error('超全局变量不允许覆盖');
             else
               unset($GLOBALS[$check_key]);
           }
@@ -336,7 +330,7 @@ class Base {
    * @param  $reason  退出的原因
    */
   public function base_exit($reason=null) {
-    $this->report_process('shutdown', $reason);
+    self::report_process('shutdown', $reason);
     exit;
   }
 
@@ -344,7 +338,7 @@ class Base {
    * @return  返回所有模块的所有信息
    */
   public function list_modules_info() {
-    return $this->modules;
+    return self::$modules;
   }
 
   /**
@@ -353,14 +347,14 @@ class Base {
    * @param  $name  名字
    */
   public function register_module($type, $include, $class, $name) {
-    if(isset($this->modules[$type][$name]))
+    if(isset(self::$modules[$type][$name]))
     {
-      $previous = $this->modules[$type][$name];
-      $this->fatal_error('A '.$type.' module named '.$name.' already exists. Please check there are no duplicate plugins. '.
+      $previous = self::$modules[$type][$name];
+      self::fatal_error('A '.$type.' module named '.$name.' already exists. Please check there are no duplicate plugins. '.
         "\n\nModule 1: ".$previous['directory'].$previous['include']);
     }
 
-    $this->modules[$type][$name] = array(
+    self::$modules[$type][$name] = array(
       // 'directory' => $directory,
       // 'urltoroot' => $urltoroot,
       'include'   => $include,
@@ -373,7 +367,7 @@ class Base {
    * @return 列出所有模块的类型
    */
   public function list_modules_type() {
-    return array_keys($this->list_modules_info());
+    return array_keys(self::list_modules_info());
   }
 
   /**
@@ -383,7 +377,7 @@ class Base {
    *      如果存在某种类型的模块，则返回包含所有模型名字的数组，否则返回一个空数组
    */
   public function list_modules($type) {
-    $modules = $this->list_modules_info();
+    $modules = self::list_modules_info();
     return is_array(@$modules[$type]) ? array_keys($modules[$type]) : array();
   }
 
@@ -393,7 +387,7 @@ class Base {
    * @param  $name  模块名字
    */
   public function get_module_info($type, $name) {
-    $modules = $this->list_modules_info();
+    $modules = self::ist_modules_info();
     return isset($modules[$type][$name]) ? $modules[$type][$name] : null;
   }
 
@@ -405,11 +399,11 @@ class Base {
   public function load_modules_with($type, $method) {
     $modules = array();
 
-    $trynames = $this->list_modules($type);
+    $trynames = self::list_modules($type);
 
     foreach ($trynames as $tryname) {
       //加载模块
-      $module = $this->load_module($type, $tryname);
+      $module = self::load_module($type, $tryname);
 
       //如果模块的方法存在
       if(method_exists($module, $method))
@@ -428,10 +422,10 @@ class Base {
   public function load_all_modules_with($method) {
     $modules = array();
     //列出模块的信息
-    $regmodules = $this->list_modules_info();
+    $regmodules = self::list_modules_info();
     foreach($regmodules as $moduletype => $modulesinfo) {
       foreach($modulesinfo as $modulename => $moduleinfo) {
-        $module = $this->load_module($moduletype, $modulename);
+        $module = self::load_module($moduletype, $modulename);
 
         if(method_exists($module, $method))
         {
@@ -449,7 +443,7 @@ class Base {
    * @param $name  模块名
    */
   public function load_module($type, $name) {
-    $module = @$this->modules[$type][$name];
+    $module = @self::$modules[$type][$name];
 
     if(is_array($module))
     {
@@ -474,7 +468,7 @@ class Base {
           $object->load_module($module['directory'], $module['urltoroot'], $type, $name);
         }
 
-        $this->modules[$type][$name]['object'] = $object;
+        self::$modules[$type][$name]['object'] = $object;
         return $object;
       }
     }
@@ -586,7 +580,7 @@ class Base {
    * @param $field  GET数组的键
    * @return 返回GET中$filed的值  
    */
-  static public function super_get($field) {
+  public static function super_get($field) {
     return isset($_GET[$field]) ? $_GET[$field] : null;
   }
 
@@ -596,7 +590,7 @@ class Base {
    * @param $field  POST数组的键
    * @return 返回POST中$filed的作为文本的值 
    */
-  static public function super_post_text($field) {
+  public static function super_post_text($field) {
     return isset($_POST[$field]) ? preg_replace('/\r\n?/', "\n", trim($_POST[$field])) : null;
   }
 
@@ -606,7 +600,7 @@ class Base {
    * @param $field  POST数组的键
    * @return 将POST中$filed的值作为数组返回 
    */
-  static public function super_post_array($filed) {
+  public static function super_post_array($filed) {
     //如果$_POST没有相应的值或者不是数组
     if(!isset($_POST[$field]) || !is_array($_POST[$field]))
     {
@@ -741,8 +735,8 @@ class Base {
    * @param  $suspend  是否暂停，默认为暂停
    */
   public function suspend_event_report($suspend=true) {
-    $this->suspend += ($suspend ? 1 : -1);
-    return $this->suspend;
+    self::$suspend += ($suspend ? 1 : -1);
+    return self::$suspend;
   }
 
   /**
@@ -754,13 +748,13 @@ class Base {
    * @param  $params
    */
   public function report_event($event, $userid, $handle, $cookieid, $params=array()) {
-    if($this->suspend)
+    if(self::$suspend)
     {
       //暂停报告事件
       return;
     }
 
-    $event_modules = $this->load_modules_with('event', 'process_event');
+    $event_modules = self::load_modules_with('event', 'process_event');
 
     foreach($event_modules as $event_module) {
       $event_module->process_event($event, $userid, $handle, $cookieid, $params);
@@ -774,23 +768,23 @@ class Base {
    * @param  可以有多个参数
    */
   public function report_process($method) {
-    if($this->suspend)
+    if(self::$suspend)
     {
       //暂停报告事件
       return;
     }
     //暂停其它事件，防止互斥，上锁
-    $this->suspend_event_report();
+    self::suspend_event_report();
 
     $args = func_get_args();
     $args = array_slice($args, 1);
 
-    $process_modules = $this->load_modules_with('process', $method);
+    $process_modules = self::load_modules_with('process', $method);
     foreach($process_modules as $process_module) {
       call_user_func_array(array($process_module, $method), $args);
     }
     //释放锁
-    $this->suspend_event_report(false);
+    self::suspend_event_report(false);
   }
 
   /**
@@ -816,8 +810,8 @@ class Base {
       );
     }
 
-    $err = new Err();
-    $err->view_err($msg);
+    $err = new Err($msg);
+    $err->render();
     exit;
   }
 

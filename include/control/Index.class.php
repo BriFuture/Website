@@ -16,17 +16,8 @@ class Index extends Page{
    * 渲染index页面,default
    * @param  $msg  额外的信息 
    */
-  public function view_index($msg=null) {
-    // require_once CORE_PATH.'db/Db.class.php';
-    // require_once CORE_PATH.'const.php';
-    // $security = Security::getInstance();
-    // $viewinfo = new Db_viewinfo();
-    // $info=array(
-    //   'ip' => $_SERVER['REMOTE_ADDR'],
-    //   'sid' => $security->set_secure_value('sid'),
-    //   'browser' => $_SERVER['HTTP_USER_AGENT'],
-    // );
-    // $viewinfo->view_add($info); 
+  public function render($msg=null) {
+    
     $this->view['title'] = 'sunmell的主页';
     $this->view['block'] = array(
       array(
@@ -54,22 +45,11 @@ class Index extends Page{
         'img'         => '/static/img/githublogo.jpg',
       ),
     );
-    $this->view['carousel-item'] = array(
-      array(
-        'src'         => '/static/img/sword_art_online_4.jpg', 
-        'description' => 'sword art online', 
-        'active'      => true,
-        ),
-      array(
-        'src'         => '/static/img/sword_art_online_3.jpg', 
-        'description' => 'sword art online', 
-        ),
-      array(
-        'src'         => '/static/img/worst_one.jpg', 
-        'description' => '落第骑士的英雄谭', 
-        ),
-      );
-    $this->render();
+
+    $dbimages = new DbImages();
+    $this->view['carousel-item'] = $dbimages->get_images_by_group("index_page");
+
+    $this->inc(__CLASS__);
   }
 
 }
