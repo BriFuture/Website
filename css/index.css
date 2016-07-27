@@ -47,18 +47,9 @@
   margin-bottom: 15px;
 }
 .bgm audio{
+  /*音频控件居中*/
   /*clear:both;*/
   display:block;
   margin: auto;
 }
 
-/*very large 
-do not consider now*/
-@media (min-width: 1200px) {
-  /*#carousel-index {
-    margin-bottom: 80px;
-  }
-  .carousel-inner.active {
-    margin-left: auto;
-  }*/
-}

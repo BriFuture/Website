@@ -1,0 +1,15 @@
+.register-wrapper {
+  background-color: #EEEEFF;
+  box-sizing: border-box;
+  border: 1px ridge #0033CC;
+  margin: 80px auto;
+}
+
+.form-horizontal p.text-danger {
+  font-size: 18px;
+}
+
+.form-group-hidden {
+  display: none;
+  visibility: hidden;
+}

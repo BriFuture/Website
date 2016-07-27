@@ -87,8 +87,8 @@ class Db implements DbImpl{
       $this->fail_error('set_charset', $db->connect_errno, $db->connect_error);
     // echo 'Success... '.$mysqli->$host_info.'\n';
     //==============
-    $base = new Base();
-    $base->report_process('db_connected');
+    
+    Base::report_process('db_connected');
     $this->connection = $db;
   }
 
@@ -114,8 +114,7 @@ class Db implements DbImpl{
     else
     {
       $errors = 'Database '.htmlspecialchars($type.' errno '.$errno).'<p>'.nl2br(htmlspecialchars($error."\n".$query)).'</p>';
-      $base   = new Base();
-      $base->fatal_error($errors, '数据库错误');
+      Base::fatal_error($errors, '数据库错误');
     }
   }
 
@@ -125,13 +124,10 @@ class Db implements DbImpl{
   */
   public function connection() {
     //如果没有实例化mysqli
-    if($this->allow_connect && !($this->connection instanceof mysqli)) 
-    {
+    if($this->allow_connect && !($this->connection instanceof mysqli)) {
       $this->connect(null);
-      if(!($this->connection instanceof mysqli))
-      {
-        $base = new Base();
-        $base->fatal_error('Failed to connect to database');
+      if(!($this->connection instanceof mysqli)) {
+        Base::fatal_error('Failed to connect to database (连接数据库失败)');
       }
     }
     return $this->connection;
@@ -142,15 +138,11 @@ class Db implements DbImpl{
    */
   public function disconnect() {
     //如果已经建立连接，关闭
-    if($this->connection instanceof mysqli) 
-    {
-      $base = new Base();
-      $base->report_process('db_disconnect');
-      if(!$this->persistent)
-      {
+    if($this->connection instanceof mysqli) {
+      Base::report_process('db_disconnect');
+      if(!$this->persistent) {
         if(!$this->connection->close())
-          $base = new Base();
-          $base->fatal_error('Database disconnect failed');
+          Base::fatal_error('Database disconnect failed（关闭数据库连接失败）');
       }
     }
     //指向空对象
@@ -286,22 +278,18 @@ class Db implements DbImpl{
       $stringpos = strpos($query, '$', $offset);
       $numberpos = strpos($query, '#', $offset);
       //如果没有要替换的字符串或者要替换数字并且是先替换数字
-      if($stringpos === false || ($numberpos !== false && $numberpos < $stringpos))
-      {
+      if($stringpos === false || ($numberpos !== false && $numberpos < $stringpos)) {
         $alwaysquote = false;
         $position = $numberpos;
       } 
-      else 
-      {
+      else {
         //加引号
         $alwaysquote = true;
         $position = $stringpos;
       }
       //如果找到的位置不是数字，报错
-      if(!is_numeric($position))
-      {
-        $base = new Base();
-        $base->fatal_error('Insufficient parameters in query （查询语句参数不足）: '. $query);
+      if(!is_numeric($position)) {
+        Base::fatal_error('Insufficient parameters in query （查询语句参数不足）: '. $query);
       }
       //换成mysql语句
       $value = $this->argument_to_mysql($arguments[$argument], $alwaysquote);
@@ -326,11 +314,12 @@ class Db implements DbImpl{
   }
 
   /**
-   * 封装mysqli对象的last_insert_id
+   * 封装mysqli对象的 insert_id
+   * 如果表中没有自增列或者查询语句不是 INSERT 或者 UPDATE 返回结果总是 0
    * @return  last insert id
    */
   public function last_insert_id() {
-    return $this->connection()->last_insert_id;
+    return $this->connection()->insert_id;
   }
 
   /**
@@ -359,7 +348,7 @@ class Db implements DbImpl{
   }
 
   /**
-   * 取出指定的列
+   * 取出指定的列，单表查询
    * 自动构造mysql查询语句，并封装query_raw查询。
    * 不再需要每个类都写mysql查询selcet语句了，
    * 而是用数组的形式给出需要查询的列以及列的别名（key）
@@ -380,16 +369,14 @@ class Db implements DbImpl{
     //构造query语句
     $query = 'SELECT ';
     //column_as 是将结果集中的列变成相应的值别名，column_from是数据库中存在的列
-    foreach ($select_spec['columns'] as $column_as => $column_from) 
-    {
+    foreach ($select_spec['columns'] as $column_as => $column_from) {
       $query .= $column_from.(is_int($column_as) ? '' :(' AS '.$column_as)).', ';
     }
     // print_r($query);
 
     //添加条数限制
     $limit='';
-    if(!is_null(@$select_spec['limit'])) 
-    {
+    if(!is_null(@$select_spec['limit'])) {
       if(is_array($select_spec['limit']) && is_numeric($select_spec['limit'][0]) && is_numeric($select_spec['limit'][1]))
         $limit = ' LIMIT '.$select_spec['limit'][0].','.$select_spec['limit'][1];
       elseif(is_numeric($select_spec['limit']))
@@ -407,14 +394,14 @@ class Db implements DbImpl{
 
     //得到原始的结果
     $result_raw = $this->query_raw($mysqlstr);
-
+    // $result_raw = $this->query(substr($query, 0, -2).(strlen(@$select_spec['source']) ? (' FROM '.$select_spec['source']) : '').$limit, @$select_spec['arguments']);
     //数据结果
     $results = $this->get_all_assoc($result_raw, @$select_spec['arraykey']);
     return $results;
   }
 
   /**
-   * 关联查询
+   * 多表关联查询
    * 自动构造mysql查询语句,通过循环single_select()函数查询
    * @param  $selectspecs  嵌套数组
    *  可能的键有：
@@ -425,13 +412,11 @@ class Db implements DbImpl{
    */
   public function multi_select($select_specs) {
     //没有参数
-    if(!count($select_specs))
-    {
+    if(!count($select_specs)) {
       return array();
     }
     //参数个数小于或者等于1，也就是查询一个表或者0个表
-    if(count($select_specs) <= 1)
-    {
+    if(count($select_specs) <= 1) {
       $out_results = array();
 
       foreach($select_specs as $skey => $select_spec) {
@@ -450,41 +435,32 @@ class Db implements DbImpl{
       //循环数组中指定的列
       foreach ($select_spec['columns'] as $column_as => $column_from) {
         //如果是数字的话，表示没有指定别名
-        if(is_int($column_as)) 
-        {
+        if(is_int($column_as)) {
           //如果用逗号隔开$column_from，那么取逗号后面的值作为$column_as，逗号不能多于两个
           $periodpos = strpos($column_from, ',');
           $column_as = is_numeric($periodpos) ? substr($column_from, $periodpos+1): $column_from;
           $select_specs[$select_spec]['autocolumn'][$column_as] = true;
         }
 
-        if(isset($select_specs[$skey]['outcolumns'][$column_as]))  //重复的列名
-        {
-          $base = new Base();
-          $base->fatal_error('Duplicate column name in multi_select()');
+        if(isset($select_specs[$skey]['outcolumns'][$column_as])) { //重复的列名
+          Base::fatal_error('Duplicate column name in multi_select()');
         }
 
         //输出列名
         $select_specs[$skey]['outcolumns'][$column_as] = $column_from;
       }
 
-      if(isset($select_spec['arraykey']))
-      {
+      if(isset($select_spec['arraykey'])) {
         //设置了arraykey作为键名 ，但是在输出的列名中， arraykey对应的值并没有设置
-        if(!isset($select_specs[$skey]['outcolumns'][$select_spec['arraykey']]))
-        {
-          $base = new Base();
-          $base->fatal_error('Used arraykey not in columns in multi_select()');
+        if(!isset($select_specs[$skey]['outcolumns'][$select_spec['arraykey']])) {
+          Base::fatal_error('Used arraykey not in columns in multi_select()');
         }
       }
 
-      if(isset($select_spec['arrayvalue']))
-      {
+      if(isset($select_spec['arrayvalue'])) {
         //设置了arrayvalue 只显示某一列的值，但是在输出的列中， arrayvalue对应的值并没有设置
-        if(!isset($select_specs[$skey]['outcolumns'][$select_spec['arrayvalue']]))
-        {
-          $base = new Base();
-          $base->fatal_error('Used arrayvalue not in columns in multi_select()');
+        if(!isset($select_specs[$skey]['outcolumns'][$select_spec['arrayvalue']])) {
+          Base::fatal_error('Used arrayvalue not in columns in multi_select()');
         }
       }
     }
@@ -505,16 +481,14 @@ class Db implements DbImpl{
           $query_str.=' AS '.$columns;
       }
 
-      if(strlen(@$select_spec['source']))
-      {
+      if(strlen(@$select_spec['source'])) {
         $query_str.=' FROM '.$select_spec['source'];
       }
 
       $query_str.=')';
 
       //防止出现单独的 UNION ALL
-      if(strlen($query_str))
-      {
+      if(strlen($query_str)) {
         $query_str.=' UNION ALL '; //关联查询
       }
 
@@ -545,27 +519,21 @@ class Db implements DbImpl{
     *     )
    */
   public static function get_all_assoc($result, $key=null, $value=null) {
-    if(!($result instanceof mysqli_result))
-    {
-      $base = new Base();
-      $base->fatal_error('Reading assocs from invalid result');
+    if(!($result instanceof mysqli_result)) {
+      Base::fatal_error('Reading assocs from invalid result');
       return;
     }
 
     $assocs = array();
-    while($assoc = $result->fetch_assoc())
-    {
+    while($assoc = $result->fetch_assoc()) {
       // print_r($assoc);
       // echo '<br>'.$key;
 
       //如果指定了$key  则将返回的每一个结果集中的第$key列的值作为嵌套数组的键
       //如果指定了$value列， 将返回结果集中的第$value列 
-      if(isset($key))
-      {
+      if(isset($key)) {
         $assocs[$assoc[$key]] = isset($value) ? $assoc[$value] : $assoc;
-      }
-      else 
-      {
+      } else {
         $assocs[] = isset($value) ? $assoc[$value] : $assoc;
       }
     }
@@ -580,33 +548,39 @@ class Db implements DbImpl{
   }
 
   /**
+   * 取出指定的行
+   */
+  public function select_row($select_spec) {
+    //构造query语句
+    $query = 'SELECT ';
+    //column_as 是将结果集中的列变成相应的值别名，column_from是数据库中存在的列
+    foreach ($select_spec['columns'] as $column_as => $column_from) {
+      $query .= $column_from.(is_int($column_as) ? '' :(' AS '.$column_as)).', ';
+    }
+  }
+
+  /**
    * @param  $result  mysqli result
    * @param  $allow_empty  是否允许为空,默认为false
    * @return 返回关联数组，只返回结果集中的第一个
    *      array('key1'=>'value1', 'key2'=>'name2', ···)
    */
   public static function get_one_assoc($result, $allow_empty=false) {
-    if(!($result instanceof mysqli_result))
-    {
-      $base = new Base();
-      $base->fatal_error('Reading one assoc from invalid result');
+    if(!($result instanceof mysqli_result)) {
+      Base::fatal_error('Reading one assoc from invalid result');
       return;
     }  
 
     $assoc = $result->fetch_assoc();
 
-    if(is_array(($assoc)))
-    {
+    if(is_array(($assoc))) {
       return $assoc;
     }
-    if($allow_empty)
-    {
+    if($allow_empty) {
       return null;
     }
-    else
-    {
-      $base = new Base();
-      $base->fatal_error('Reading one assoc from empty result');
+    else {
+      Base::fatal_error('Reading one assoc from empty result');
     }
   }
 
@@ -616,10 +590,8 @@ class Db implements DbImpl{
    *      array('1'=>'somevalue1', '2'=>'somevalue2', ····)
    */
   public static function get_all_value($result) {
-    if(!($result instanceof mysqli_result)) 
-    {
-      $base = new Base();
-      $base->fatal_error('Reading values from invalid result');
+    if(!($result instanceof mysqli_result)) {
+      Base::fatal_error('Reading values from invalid result');
       return;
     }
     $output = array();
@@ -637,28 +609,22 @@ class Db implements DbImpl{
    * @return  结果集中的第一个数据或者null或者报错
    */
   public static function get_one_value($result, $allow_empty=false) {
-    if(!($result instanceof mysqli_result)) 
-    {
-      $base = new Base();
-      $base->fatal_error('Reading one value from invalid result');
+    if(!($result instanceof mysqli_result)) {
+      Base::fatal_error('Reading one value from invalid result');
       return;
     }
 
     $row = $result->fetch_row();
     //如果有数据的话，只取每一行数据的第一个
-    if(is_array($row))
-    {
+    if(is_array($row)) {
       return $row[0];
     }
     //否则如果允许为空的话
-    if($allow_empty)
-    {
+    if($allow_empty) {
       return null;
     }
-    else
-    {
-      $base = new Base();
-      $base->fatal_error('Reading one value from empty results');
+    else {
+      Base::fatal_error('Reading one value from empty results');
     }
   }
 

@@ -33,7 +33,7 @@ class Index extends Page{
         'img'         => 'data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==',
       ),
       array(
-        'href'        => '//blog.sunsmell.cc',
+        'href'        => Base::get_url_path('Blog'),
         'title'       => 'My Blog',
         'description' => 'my blog powered by wordpress',
         'img'         => 'data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==',
@@ -47,7 +47,7 @@ class Index extends Page{
     );
 
     $dbimages = new DbImages();
-    $this->view['carousel-item'] = $dbimages->get_images_by_group("index_page");
+    $this->view['carousel-item'] = $dbimages->get_images_by_group("index_page_carousel");
 
     $this->inc(__CLASS__);
   }

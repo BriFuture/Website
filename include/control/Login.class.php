@@ -12,7 +12,8 @@ if(!defined('VERSION')) {
 
 class Login extends Page {
 
-  public function render($msg) {
+  public function render() {
+    $this->view['titile'] = "Login";
     $this->inc(__CLASS__);
   }
 }

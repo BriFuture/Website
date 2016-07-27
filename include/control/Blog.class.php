@@ -1,18 +1,18 @@
 <?php 
-/** 
+/**
  * @author future <zhoujw@sunsmell.cc>
- * startdate:0528
- * filename: TestJsGame.class.php
- * 测试前端 js
+ * startdate:07.26
+ * filename: Blog.class.php
  */
 if(!defined('VERSION')) {
   header('Location:/');
   exit();
 }
 
-class TestJsGame extends Page{
+class Blog extends Page {
   public function render() {
-    $this->view['title'] = "Test JS Game";
+    $this->view['title'] = "blog page";    
     $this->inc(__CLASS__);
   }
+
 }

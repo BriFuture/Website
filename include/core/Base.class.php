@@ -51,16 +51,12 @@ class Base {
    */
   private static $modules;
 
-  public function __construct() {
-
-  }
-
   /**
    * 重定向，封装header函数
    * @param $url 重定向到$url地址
    * @param $opt 额外的选项
    */
-  public function raw_redirect($url, $opt=null) {
+  public static function raw_redirect($url, $opt=null) {
     header('Location: '.$url);
     self::base_exit('redirect');
   }
@@ -69,9 +65,9 @@ class Base {
    * 设置URL格式
    * @param  $url_format
    */
-  public function set_url_format($url_format) {
-    $configure = new Configure();
-    return $configure->modify_config('URL_FORMAT', $url_format);
+  public static function set_url_format($url_format) {
+    // $configure = new Configure();
+    // return $configure->modify_config('URL_FORMAT', $url_format);
   }
 
   /**
@@ -176,21 +172,21 @@ class Base {
   /**
    * 初始化常量
    */
-  public function initialize_constants() {
+  public static function initialize_constants() {
 
   }
 
   /**
    * 用json编码
    */
-  public function json_encode() {
+  public static function json_encode() {
 
   }
 
   /**
    * 用json解码
    */
-  public function json_decode() {
+  public static function json_decode() {
 
   }
 
@@ -199,7 +195,7 @@ class Base {
    * @return float  
    *      版本的数值
    */
-  public function version_to_float($version) {
+  public static function version_to_float($version) {
     //float value
     $value = 0.0;
     if(preg_match('/[0-9\.]+/', $version, $matches))
@@ -272,21 +268,21 @@ class Base {
   /**
    * 初始化模块配置
    */
-  public function initialize_modularity() {
+  public static function initialize_modularity() {
 
   }
 
   /**
    * 注册核心模块
    */
-  public function register_core_modules() {
+  public static function register_core_modules() {
 
   }
 
   /**
    * 注册 layer
    */
-  public function register_layer() {
+  public static function register_layer() {
 
   }
 
@@ -296,7 +292,7 @@ class Base {
    * @param $eval
    * @param $filename
    */
-  public function eval_from_file($eval, $filename) {
+  public static function eval_from_file($eval, $filename) {
 
   }
 
@@ -306,7 +302,7 @@ class Base {
    * @param  $function 被调用的函数
    * @param  $args     参数
    */
-  public function base_call($function, $args) {
+  public static function base_call($function, $args) {
     switch(count($args)) {
       case 0:
         return $function();
@@ -329,7 +325,7 @@ class Base {
    * 退出，向观察者报告状态
    * @param  $reason  退出的原因
    */
-  public function base_exit($reason=null) {
+  public static function base_exit($reason=null) {
     self::report_process('shutdown', $reason);
     exit;
   }
@@ -337,7 +333,7 @@ class Base {
   /**
    * @return  返回所有模块的所有信息
    */
-  public function list_modules_info() {
+  public static function list_modules_info() {
     return self::$modules;
   }
 
@@ -346,7 +342,7 @@ class Base {
    * @param  $type  模块类型
    * @param  $name  名字
    */
-  public function register_module($type, $include, $class, $name) {
+  public static function register_module($type, $include, $class, $name) {
     if(isset(self::$modules[$type][$name]))
     {
       $previous = self::$modules[$type][$name];
@@ -366,7 +362,7 @@ class Base {
   /**
    * @return 列出所有模块的类型
    */
-  public function list_modules_type() {
+  public static function list_modules_type() {
     return array_keys(self::list_modules_info());
   }
 
@@ -376,7 +372,7 @@ class Base {
    * @return 
    *      如果存在某种类型的模块，则返回包含所有模型名字的数组，否则返回一个空数组
    */
-  public function list_modules($type) {
+  public static function list_modules($type) {
     $modules = self::list_modules_info();
     return is_array(@$modules[$type]) ? array_keys($modules[$type]) : array();
   }
@@ -386,7 +382,7 @@ class Base {
    * @param  $type  模块类型
    * @param  $name  模块名字
    */
-  public function get_module_info($type, $name) {
+  public static function get_module_info($type, $name) {
     $modules = self::ist_modules_info();
     return isset($modules[$type][$name]) ? $modules[$type][$name] : null;
   }
@@ -396,7 +392,7 @@ class Base {
    * @param  $type  模块的类型
    * @param  $method  方法
    */
-  public function load_modules_with($type, $method) {
+  public static function load_modules_with($type, $method) {
     $modules = array();
 
     $trynames = self::list_modules($type);
@@ -419,7 +415,7 @@ class Base {
    * 用$method 加载所有模块
    * @param $method  加载的方式
    */
-  public function load_all_modules_with($method) {
+  public static function load_all_modules_with($method) {
     $modules = array();
     //列出模块的信息
     $regmodules = self::list_modules_info();
@@ -442,7 +438,7 @@ class Base {
    * @param $type  模块类型
    * @param $name  模块名
    */
-  public function load_module($type, $name) {
+  public static function load_module($type, $name) {
     $module = @self::$modules[$type][$name];
 
     if(is_array($module))
@@ -477,7 +473,7 @@ class Base {
   /**
    * 返回html
    */
-  public function get_html($string, $multiline=false) {
+  public static function get_html($string, $multiline=false) {
 
   }
   /**
@@ -488,7 +484,7 @@ class Base {
    *        当$type为raw时，将$addition原样输出
    * @param $addtion输出其它指定的信息
   */
-  public function html_content($type, $addition) {
+  public static function html_content($type, $addition) {
     if($type === 'raw')
     {
       $content = $addition;
@@ -532,7 +528,7 @@ class Base {
   /**
    * 过滤html
    */
-  public function sanitize_html($html, $links_new_window) {
+  public static function sanitize_html($html, $links_new_window) {
 
   }
 
@@ -540,7 +536,7 @@ class Base {
    * 将xml中的特定字符去掉
    * @param  $string  特定字符
    */
-  public function get_xml($string) {
+  public static function get_xml($string) {
     return htmlspecialchars(preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', (string)$string ));
   }
 
@@ -553,7 +549,7 @@ class Base {
    * @param  $force_quotes
    *      是否强制引号  
    */
-  public function get_js($value, $force_quotes=false) {
+  public static function get_js($value, $force_quotes=false) {
     $boolean = is_bool($value);
     if($boolean)
     {
@@ -629,7 +625,7 @@ class Base {
    * @return  bool
    *      true  超过    false  没有超过
    */
-  public function post_limit_exceeded() {
+  public static function post_limit_exceeded() {
     if(in_array($_SERVER['REQUEST_METHOD'], array('POST', 'PUT')) && empty($_POST) && empty($_FILES))
     {
       $postmaxsize = ini_get('post_max_size');
@@ -656,7 +652,7 @@ class Base {
    *      true  是POST请求
    *      false 不是POST请求
    */
-  public function is_http_post() {
+  public static function is_http_post() {
     return ($_SERVER['REQUEST_METHOD'] == 'POST') || !empty($_POST);
   }
 
@@ -665,7 +661,7 @@ class Base {
    * @return bool
    *      true  是    false  不是
    */
-  public function is_desktop_probably() {
+  public static function is_desktop_probably() {
     //浏览器标识
     $explore = array(
       'MSIE', 'Firefox', 'Chrome', 'Safari', 'Opera', 'Gecko', 'MIDP', 'PLAYSTATION', 'Teleca',
@@ -679,7 +675,7 @@ class Base {
    * @return bool
    *      true  是    false  不是
    */
-  public function is_mobile_probably() {
+  public static function is_mobile_probably() {
 
   }
 
@@ -708,7 +704,7 @@ class Base {
    * 解析URL 
    * @param  $url  
    */
-  public function retrieve_url($url) {
+  public static function retrieve_url($url) {
     $contents = @file_get_contents($url);
 
     if(!strlen($contents) && function_exists('curl_exec'))
@@ -725,7 +721,7 @@ class Base {
    * 输出调试信息
    * @param $var  需要调试的内容
    */
-  public function debug($var) {
+  public static function debug($var) {
     $debug = "\n<pre>".($var === null ? 'NULL' : print_r($var, true))."</pre>\n";
     echo nl2br($debug);
   }
@@ -734,7 +730,7 @@ class Base {
    * 暂停报告事件
    * @param  $suspend  是否暂停，默认为暂停
    */
-  public function suspend_event_report($suspend=true) {
+  public static function suspend_event_report($suspend=true) {
     self::$suspend += ($suspend ? 1 : -1);
     return self::$suspend;
   }
@@ -747,7 +743,7 @@ class Base {
    * @param  $cookieid
    * @param  $params
    */
-  public function report_event($event, $userid, $handle, $cookieid, $params=array()) {
+  public static function report_event($event, $userid, $handle, $cookieid, $params=array()) {
     if(self::$suspend)
     {
       //暂停报告事件
@@ -767,7 +763,7 @@ class Base {
    * @param  $method  报告进程所用的方法
    * @param  可以有多个参数
    */
-  public function report_process($method) {
+  public static function report_process($method) {
     if(self::$suspend)
     {
       //暂停报告事件
@@ -793,7 +789,7 @@ class Base {
    * @param  $cTitle 错误内容的标题
    * @param  $title  网页标题
    */
-  public function fatal_error($error, $cTitle=null, $title='发生了一个严重的错误') {
+  public static function fatal_error($error, $cTitle=null, $title='发生了一个严重的错误') {
     //如果仅仅是数字的话，直接传递errcode就行
     if(is_numeric($error))
     {

@@ -43,7 +43,7 @@ class Cookie {
    * @param  $action    相应的操作
    */
   public static function cookie_report_action($cookieid, $action) {
-    $dbCookie = new DbCookie();
-    $dbCookie->update_cookie($cookieid, Base::get_remote_ip());
+    $dbCookies = new DbCookies();
+    $dbCookies->update_cookie($cookieid, Base::get_remote_ip());
   }
 }

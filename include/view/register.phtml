@@ -4,3 +4,66 @@ if(!defined('VERSION')) {
   exit();
 }
 ?>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta  charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <!-- <meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1, width=device-width"> -->
+  <!-- <meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1" > -->
+  <meta http-equiv="Content-Type" content="text/html;" />
+  <title><?php echo $this->view['title'] ?></title>
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+  <!-- jQuery文件-->
+  <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+  <!-- 新 Bootstrap 核心 CSS 文件 -->
+  <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+  <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="/css/header-footer.css" />
+  <link rel="stylesheet" type="text/css" href="/css/register.css" />
+  <script type="text/javascript" src="/js/register.js"></script>
+  <script type="text/javascript" src="/js/header-footer.js"></script>
+</head>
+<body>
+  <?php include $this->view['header']; ?>
+  <div class="container register-wrapper" id="#wrapper">
+    <form class="form-horizontal" action="<?php echo Base::get_url_path("Register") ?>" method="post">
+      <div class="form-group ">
+      </div>
+      <div class="form-group form-group-lg">
+        <label for="inputEmail3" class="col-sm-3 control-label">Email</label>
+        <div class="col-sm-4 col-sm-offset-1">
+          <input type="email" class="form-control" id="inputEmail3" placeholder="Email" name="email">
+        </div>
+        <label for="inputEmail3" class="control-label"><p class="text-danger">*</p></label>
+      </div>
+      <div class="form-group form-group-lg">
+        <label for="inputName3" class="col-sm-3 control-label">Name</label>
+        <div class="col-sm-4 col-sm-offset-1">
+          <input type="text" class="form-control" id="inputName3" placeholder="Name" name="username">
+        </div>
+        <label for="inputEmail3" class="control-label"><p class="text-danger">*</p></label>
+      </div>
+      <div class="form-group form-group-lg">
+        <label for="inputPassword3" class="col-sm-3 control-label">Password</label>
+        <div class="col-sm-4 col-sm-offset-1">
+          <input type="password" class="form-control" id="inputPassword3" placeholder="Password" name="passwd">
+        </div>
+        <label for="inputEmail3" class="control-label"><p class="text-danger">*</p></label>
+      </div>
+      
+      <div class="form-group">
+        <div class="col-sm-offset-4 col-sm-10">
+          <button type="submit" class="btn btn-success">Register</button>
+        </div>
+      </div>
+      <div class="form-group form-group-hidden">
+        <input type="text" name="code" value="<?php echo $this->view['secure_code']; ?>">
+      </div>
+    </form>
+  </div>
+  <?php include $this->view['footer']; ?> 
+</body>
+</html>

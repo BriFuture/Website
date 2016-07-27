@@ -5,5 +5,7 @@ if(!defined('VERSION')) {
 }
 
 class Block extends Page {
-  
+  public function render() {
+    
+  }
 }

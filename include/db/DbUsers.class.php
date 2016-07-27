@@ -12,13 +12,13 @@ if(!defined('VERSION'))
   exit();
 }
 
-class DbUser {
+class DbUsers {
   // const $COLUMNS = ['id', 'UID','name', 'pass', 'passslat','lever', 'email', 'contact', 'picture', 'score'];
   /**
    * 数据库对象
    */
   private $db;
-  const TABLE_NAME = 'user';
+  // const TABLE_NAME = 'users';
   private $error;
 
   public function __construct() {
@@ -33,12 +33,14 @@ class DbUser {
   public function add_user(array $arr) {
     if(!$this->check_input($arr))
     {
-      Base::fatal_error('数据有错误, ');
+      // Base::fatal_error('数据有错误, ');
       return;
     }
-    $query  = 'INSERT INTO user (UID, name, pass, passsalt, lever, email, contact, picture, score, created) VALUES $, $, $, $, $, $, $, $, $, NOW() ';
-    $result = $this->db->query($query, $this->formed_UID(), $arr['name'], $arr['pass'], $this->get_passsalt(), $arr['lever'], $arr['email'], $arr['contact'], $picture, $score);
-    return $this->db->last_insert_id();
+    $query_str  = 'INSERT INTO users (UID, name, pass, passsalt, level, email, contact, picture, score, reg_time) VALUES ($, $, $, $, $, $, $, $, $, NOW()) ';
+    $result = $this->db->query($query_str, $this->formed_UID(), $arr['name'], $arr['passwd'], $arr['passsalt'], $arr['level'], $arr['email'], $arr['contact'], $arr['picture'], $arr['score']);
+    // return $this->db->last_insert_id();
+    //由于没有自增列
+    return $result;
   }
 
   /**
@@ -61,16 +63,31 @@ class DbUser {
    * 根据UID返回相应的数据
    */
   public function select_info($who) {
-
+    $selectspec = array (
+      'columns' => array(
+        'UID',
+        'name',
+        'pass',
+        'passsalt',
+        'level',
+        'email',
+        'contact',
+        'picture',
+        'score',
+        'reg_time'
+      ),
+      'source' => 'users',
+      'arraykey' => 'UID'
+    );
+    return $this->db->single_select($selectspec);
   }
 
   /**
    * 随机生成passsalt
    * @return  随机码
    */
-  private function get_passsalt($format=null) {
-    $security = new Security();
-    return $security->random(8);
+  public function get_passsalt($format=null) {
+    return Security::random(8);
   } 
 
   /**
@@ -83,7 +100,7 @@ class DbUser {
     $month = date('m');
     $random_num = sprintf('%06d', mt_rand(0,999999));
     $uid = $year.$month.$random_num;
-
+    return $uid;
   }
 
   /**
@@ -96,7 +113,7 @@ class DbUser {
     {
       $this->error .= ' 没有设置用户名！ ';
     }
-    if(!isset($arr['pass']))
+    if(!isset($arr['passwd']))
     {
       $this->error .= ' 没有设置密码！ ';
     }
@@ -104,5 +121,10 @@ class DbUser {
     {
       $this->error .= ' 没有设置邮箱！ ';
     }
+
+    if(count($this->error) == 0) {
+      return true;
+    }
+    return false;
   }
 }

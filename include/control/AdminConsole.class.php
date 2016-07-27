@@ -14,7 +14,7 @@ class AdminConsole extends Page {
   public function render() {
     $this->view['title'] = "console page";
     $this->get_options();
-    // $this->render();
+    
     $this->inc(__CLASS__);
   }
 

@@ -13,15 +13,10 @@ if(!defined('VERSION')) {
   exit();
 }
 class Security {
-  // private $key_map = array();
-  // private static $security;
 
-  function __construct() {
-  }
-  
   /**
    *
-   * @deprecated 放弃了，一旦页面跳转，无法实现在页面间共享对象
+   * @deprecated 一旦页面跳转，无法实现在页面间共享对象
    */
   public static function getInstance() {
     unset($_SESSION['security']);
@@ -47,7 +42,7 @@ class Security {
    * 产生长度为$length的随机码
    * @return random code
    */
-  public function random($length) {
+  public static function random($length=64) {
     $random = "";
     $random_codes=str_split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789');
 
@@ -77,7 +72,7 @@ class Security {
    * 设置表单安全码
    * 设置COOKIE
    */
-  public function set_form_security_key() {
+  public static function set_form_security_key() {
     //引用外部变量
     global $form_key_cookie_set;
 
@@ -86,9 +81,9 @@ class Security {
     if(!$user->is_logged_in() && !@$form_key_cookie_set) {
       $form_key_cookie_set = true;
 
-      if(strlen(@$_COOKIE['secure_key']) != FROM_KEY_LENGTH) {
+      if(strlen(@$_COOKIE['secure_key']) != FORM_KEY_LENGTH) {
         //需要重新设置key
-        $_COOKIE['secure_key'] = random(FROM_KEY_LENGTH);
+        $_COOKIE['secure_key'] = self::random(FORM_KEY_LENGTH);
       }
 
       setcookie('secure_key', $_COOKIE['secure_key'], time()+2*FORM_EXPIRY_TIME, '/', COOKIE_DOMAIN);
@@ -99,7 +94,7 @@ class Security {
    * 计算表单的hash值
    * @return hash value
    */
-  public function calc_form_security_hash($action, $timestamp) {
+  private static function calc_form_security_hash($action, $timestamp) {
     //掺杂变量
     $salt = 'form_security_salt';
 
@@ -115,7 +110,7 @@ class Security {
    * 返回随机的安全码 
    * @return code
    */
-  public function get_form_security_code($action) {
+  public static function get_form_security_code($action) {
     self::set_form_security_key();
 
     $timestamp = ('db_time');
@@ -128,7 +123,7 @@ class Security {
    * 验证安全码
    * @return bool
    */
-  public function check_form_security_code($action, $value) {
+  public static function check_form_security_code($action, $value) {
     $users = new Users();
 
     //需要报告的错误
@@ -156,36 +151,29 @@ class Security {
         if($timestamp > $timenow)
           //表单时间比当前时间大，表单有问题
           $report_problems[] = 'time '.($timestamp-$timenow).'s in future';
-        elseif($timestamp < ($timenow-FPRM_EXPIRY_SECS))
+        elseif($timestamp < ($timenow-FORM_EXPIRY_SECS))
           //尚未超时
           $silent_problems[] = '在 '.($timenow-$timestamp).'s 后超时';
 
-        if($users->is_logged_in())
-        {
+        if($users->is_logged_in()) {
           if(!$logged_in)
             $silent_problems[] = '正在登陆';
         }
-        else
-        {
-          if($logged_in)
-          {
+        else {
+          if($logged_in) {
             $silent_problems[] = '正在退出';
           }
-          else
-          {
+          else {
             //取出COOKIE中的key
             $key = @$_COOKIE['secure_key'];
 
-            if(!isset($key))
-            {
+            if(!isset($key)) {
               $silent_problems[] = '缺少 COOKIE KEY ';
             }
-            elseif(!strlen($key))
-            {
+            elseif(!strlen($key)) {
               $silent_problems[] = 'COOKIE KEY 为空 ';
             }
-            elseif(strlen($key) != FORM_KEY_LENGTH)
-            {
+            elseif(strlen($key) != FORM_KEY_LENGTH) {
               $report_problems[] = 'COOKIE KEY ('.$key.') 无效 ';
             }
           }
@@ -193,14 +181,12 @@ class Security {
 
         //如果没有问题产生
         if(empty($silent_problems) && empty($report_problems))
-          if(strtolower(self::calc_form_security_hash($action, $timestamp)) != strtolower($hash))
-          {
+          if(strtolower(self::calc_form_security_hash($action, $timestamp)) != strtolower($hash)) {
             //但是随机码不匹配
             $report_problems[] = 'code 不匹配';
           }
       }
-      else
-      {
+      else {
         //不是3个部分就有错误
         $report_problems[] = 'code '.$value.' 错误';
       }

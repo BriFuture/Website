@@ -14,3 +14,4 @@ define('FORM_KEY_LENGTH', 64);
 define('FORM_EXPIRY_TIME', 60*60*6);
 define('COOKIE_DOMAIN','');
 define('URL_FORMAT', 0);
+define('FORM_EXPIRY_SECS', 600);
