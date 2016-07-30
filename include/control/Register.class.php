@@ -20,8 +20,6 @@ class Register extends Page {
   private $passsalt;
 
 
-  private $error;
-  
   public function render() {
     if(!Base::super_post_text("code")) {
       $this->default_dis();
@@ -30,6 +28,7 @@ class Register extends Page {
       $this->username = Base::super_post_text("username");
       $this->passwd = Base::super_post_text("passwd");
       $this->code = Base::super_post_text("code");
+
       $this->validate_input();
     }
   }
@@ -49,39 +48,32 @@ class Register extends Page {
    */
   private function validate_input() {
     if(!preg_match('/^\w+[\w\.]*@[\w]+(\.[\w]+)+/', $this->email)) {
-      $this->error['email'] = '邮箱 '.$this->email.' 有误。';
+      $this->view['error']['email'] = '邮箱 '.$this->email.' 有误。';
     } else {
       // echo '邮箱 '.$this->email.' 无误。';
     }
     //没有错误就跳转到主页
-    if(count($this->error) == 0) {
+    if(count($this->view['error']) == 0) {
       $dbusers = new DbUsers();
       // echo '邮箱 '.$this->email;
       $this->passsalt = $dbusers->get_passsalt();
 
       $newuser = array(
         'name'    => $this->username,
-        'passwd'    => $this->encrypt_passwd($this->passsalt),
+        'passwd'    => Users::encrypt_passwd($this->passwd, $this->passsalt),
         'email'   => $this->email,
-        'level'   => 100,
+        'level'   => 0,
         'contact' => '',
         'picture' => '',
         'score'   => 0,
         'passsalt' => $this->passsalt,
       );
       $dbusers->add_user($newuser);
-      print_r($dbusers->select_info($))
+      Base::raw_redirect('/');
     } else {
       $this->default_dis();
     }
   }
 
-  /**
-   * 用不可逆的算法加密
-   */
-  private function encrypt_passwd($passsalt) {
-    $encrypt_code = crypt($this->passwd, $passsalt);
-    return base64_encode($encrypt_code);
-  }
 
 }

@@ -30,28 +30,30 @@ if(!defined('VERSION')) {
   <?php include $this->view['header']; ?>
   <div class="container register-wrapper" id="#wrapper">
     <form class="form-horizontal" action="<?php echo Base::get_url_path("Register") ?>" method="post">
-      <div class="form-group ">
-      </div>
+      <div class="form-group "></div>
       <div class="form-group form-group-lg">
         <label for="inputEmail3" class="col-sm-3 control-label">Email</label>
         <div class="col-sm-4 col-sm-offset-1">
           <input type="email" class="form-control" id="inputEmail3" placeholder="Email" name="email">
         </div>
-        <label for="inputEmail3" class="control-label"><p class="text-danger">*</p></label>
+        <div class="col-sm-1 "><p class="text-danger text-left">*</p></div>
+        <div class="col-sm-2" id="error-info"><p class="text-danger"><?php echo @$this->view['error']['email']; ?></p></div>
       </div>
       <div class="form-group form-group-lg">
         <label for="inputName3" class="col-sm-3 control-label">Name</label>
         <div class="col-sm-4 col-sm-offset-1">
           <input type="text" class="form-control" id="inputName3" placeholder="Name" name="username">
         </div>
-        <label for="inputEmail3" class="control-label"><p class="text-danger">*</p></label>
+        <div class="col-sm-1 "><p class="text-danger text-left">*</p></div>
+        <div class="col-sm-2" id="error-info"><p class="text-danger"><?php echo @$this->view['error']['name']; ?></p></div>
       </div>
       <div class="form-group form-group-lg">
         <label for="inputPassword3" class="col-sm-3 control-label">Password</label>
         <div class="col-sm-4 col-sm-offset-1">
           <input type="password" class="form-control" id="inputPassword3" placeholder="Password" name="passwd">
         </div>
-        <label for="inputEmail3" class="control-label"><p class="text-danger">*</p></label>
+        <div class="col-sm-1 "><p class="text-danger text-left">*</p></div>
+        <div class="col-sm-2" id="error-info"><p class="text-danger"><?php echo @$this->view['error']['passwd']; ?></p></div>
       </div>
       
       <div class="form-group">

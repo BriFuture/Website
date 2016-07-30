@@ -56,6 +56,7 @@ abstract class Page {
     $this->view['logo']   = $URLS['logo'];
     $this->view['avatar'] = $TEST['avatar'];
     $this->view['login']  = 'login';
+    $this->view['logout']  = 'logout';
     $this->view['reg']  = 'no-reg';
     include VIEW_PATH.strtolower($name).'.phtml';
   }

@@ -43,7 +43,7 @@ if(!defined('VERSION')) {
         <td><p class="text-center"><?php echo $option['value']; ?></p></td>
         <td><p class="text-center"><?php echo $option['autoload']; ?></p></td>
       </tr>
-    <?php endforeach; ?>
+    <?php endforeach ?>
     </table>
 
     <br />
@@ -63,14 +63,15 @@ if(!defined('VERSION')) {
         <td><p class="text-center"><?php echo $image['img_group']; ?></p></td>
         <td><p class="text-center"><?php echo $image['description']; ?></p></td>
       </tr>
-    <?php endforeach; ?>
+    <?php endforeach ?>
     </table>
   </div>
-    <div class="bgm">
-      <audio src="/static/music/inuyasha_bgm.mp3" controls="controls" autoplay="autoplay" loop="loop">
-        您的浏览器不支持 audio 标签。
-      </audio>
-    </div>
+  <div>
+   <!--  <?php foreach ($this->view['users'] as $key => $value): ?>
+      <?php echo $key.' ===> '.$value; ?><br>
+    <?php endforeach ?> -->
+    <!-- <?php echo $this->view['updateusers'] ?> -->
+  </div>
   <?php include $this->view['footer']; ?> 
 </body>
 </html>

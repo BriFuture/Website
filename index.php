@@ -25,7 +25,6 @@ Factory::register();
 //初始化配置php
 Base::initialize_php();
 //打开会话
-$users = new Users();
-$users->start_session();
+Users::start_session();
 //分发
 Base::dispatch();

@@ -15,30 +15,6 @@ if(!defined('VERSION')) {
 class Security {
 
   /**
-   *
-   * @deprecated 一旦页面跳转，无法实现在页面间共享对象
-   */
-  public static function getInstance() {
-    unset($_SESSION['security']);
-    if(isset($_SESSION['security'])) {
-      self::$security = unserialize(base64_decode($_SESSION['security']));
-      if(!(self::$security instanceof self))
-        $_SESSION['security'] = base64_encode(serialize(new self));
-      // print_r($_SESSION['security']);
-    }
-    else
-    {
-      $_SESSION['security'] = base64_encode(serialize(new self));
-    }
-    self::$security = unserialize(base64_decode($_SESSION['security']));
-    // if(self::$security instanceof self)
-    //   echo 'security is self';
-    // else
-    //   echo 'is not self';
-    return self::$security;
-  }
-
-  /**
    * 产生长度为$length的随机码
    * @return random code
    */
@@ -54,21 +30,6 @@ class Security {
   }
 
   /**
-   * 创建key相关的键值对,
-   * @param $key key的名称
-   * @return 生成的随机码
-  */
-  public function set_secure_value($key, $length=64, $base64=false) {
-    $random = random($length);
-
-    if($base64)
-      $random = base64_encode($random);
-    // $this->key_map[$key] = $random;
-    $_SESSION[$key] = $random;
-    return $random;
-    // echo count($key_map);
-  }
-  /**
    * 设置表单安全码
    * 设置COOKIE
    */
@@ -76,9 +37,7 @@ class Security {
     //引用外部变量
     global $form_key_cookie_set;
 
-    $user = new Users();
-
-    if(!$user->is_logged_in() && !@$form_key_cookie_set) {
+    if(!Users::is_logged_in() && !@$form_key_cookie_set) {
       $form_key_cookie_set = true;
 
       if(strlen(@$_COOKIE['secure_key']) != FORM_KEY_LENGTH) {
@@ -98,10 +57,8 @@ class Security {
     //掺杂变量
     $salt = 'form_security_salt';
 
-    $user = new Users();
-
-    if($user->is_logged_in())
-      return sha1($salt.'/'.$action.'/'.$timestamp.'/'.$user->get_logged_in_userid().'/'.$user->get_logged_in_user_field('passsalt'));
+    if(Users::is_logged_in())
+      return sha1($salt.'/'.$action.'/'.$timestamp.'/'.Users::get_logged_in_user_field('uid').'/'.Users::get_logged_in_user_field('passsalt'));
     else
       return sha1($salt.'/'.$action.'/'.$timestamp.'/'.@$_COOKIE['secure_key']);
   }
@@ -113,7 +70,8 @@ class Security {
   public static function get_form_security_code($action) {
     self::set_form_security_key();
 
-    $timestamp = ('db_time');
+    // $timestamp = Options::opt('db_time');
+    $timestamp = time();
 
     $user = new Users();
     return (int)($user->is_logged_in()).'-'.$timestamp.'-'.self::calc_form_security_hash($action, $timestamp);
@@ -124,8 +82,6 @@ class Security {
    * @return bool
    */
   public static function check_form_security_code($action, $value) {
-    $users = new Users();
-
     //需要报告的错误
     $report_problems = array();
     //一般错误
@@ -146,16 +102,19 @@ class Security {
         $logged_in = $parts[0];
         $timestamp = $parts[1];
         $hash      = $parts[2];
-        $timenow   = 'now_time';
+        // $timenow   = 'now_time';
+        $timenow = time();
 
-        if($timestamp > $timenow)
+        if($timestamp > $timenow) {
           //表单时间比当前时间大，表单有问题
           $report_problems[] = 'time '.($timestamp-$timenow).'s in future';
-        elseif($timestamp < ($timenow-FORM_EXPIRY_SECS))
+        }
+        elseif($timestamp < ($timenow-FORM_EXPIRY_SECS)) {
           //尚未超时
           $silent_problems[] = '在 '.($timenow-$timestamp).'s 后超时';
+        }
 
-        if($users->is_logged_in()) {
+        if(Users::is_logged_in()) {
           if(!$logged_in)
             $silent_problems[] = '正在登陆';
         }
@@ -194,7 +153,7 @@ class Security {
     //记录错误
     if(count($report_problems))
       @error_log('PHP SunSmell form security violation for '.$action.
-      ' by '.($users->is_logged_in ? ('userid '.$users->get_logged_in_userid()) : 'anonymous').
+      ' by '.(Users::is_logged_in ? ('userid '.Users::get_logged_in_user_field('uid')) : 'anonymous').
       ' ('.implode(',', array_merge($report_problems, $silent_problems)).')'.
       ' on '.@$_SERVER['REQUEST_URI'].
       ' via '.@$_SERVER['HTTP_REFERER']

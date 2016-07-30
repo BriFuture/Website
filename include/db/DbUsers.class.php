@@ -54,32 +54,31 @@ class DbUsers {
   /**
    * @param $who UID
    * 根据UID更新某些信息
+   * @return  
+   *    1  更新成功
    */
-  public function update($who, array $arr) {
-
+  public function update($who, array $update) {
+    $query_str    = 'UPDATE `users` SET ';
+    foreach ($update as $key => $value) {
+      $query_str .= '`'.$key.'` = $, ';
+    }
+    $query_str    = substr($query_str, 0, -2).' WHERE `'.$who['column'].'` = $';
+    $update_arr   = array_values($update);
+    $update_arr[] = $who['handle']; 
+    $mysql_str    = $this->db->substitude($query_str, $update_arr);
+    // echo $mysql_str;
+    $result       = $this->db->query_raw($mysql_str);
+    return $result;
   }
 
   /**
    * 根据UID返回相应的数据
+   * @param  $who  array('column' => '', 'handle' => '')
    */
   public function select_info($who) {
-    $selectspec = array (
-      'columns' => array(
-        'UID',
-        'name',
-        'pass',
-        'passsalt',
-        'level',
-        'email',
-        'contact',
-        'picture',
-        'score',
-        'reg_time'
-      ),
-      'source' => 'users',
-      'arraykey' => 'UID'
-    );
-    return $this->db->single_select($selectspec);
+    $query_str = 'SELECT `UID`, `name`, `pass`, `passsalt`, `level`, `email`, `contact`, `picture`, `score`, `reg_time`, `reg_IP`, `SID`, `browser`, `last_browser`, `first_login`, `last_login`, `last_IP` FROM users WHERE `'.$who['column'].'` = '. (is_numeric($who['handle']) ? '#' : '$');
+    $result = $this->db->query($query_str, $who['handle']);
+    return $this->db->get_one_assoc($result, true);
   }
 
   /**
@@ -109,16 +108,13 @@ class DbUsers {
    * @return  bool  
    */
   private function check_input($arr, $for=null) {
-    if(!isset($arr['name']))
-    {
+    if(!isset($arr['name'])) {
       $this->error .= ' 没有设置用户名！ ';
     }
-    if(!isset($arr['passwd']))
-    {
+    if(!isset($arr['passwd'])) {
       $this->error .= ' 没有设置密码！ ';
     }
-    if(!isset($arr['email']))
-    {
+    if(!isset($arr['email'])) {
       $this->error .= ' 没有设置邮箱！ ';
     }
 

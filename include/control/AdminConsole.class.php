@@ -24,6 +24,6 @@ class AdminConsole extends Page {
     
     $dbimages = new DbImages();
     $this->view['images'] = $dbimages->get_all();
-
+    $this->view['users'] = Users::get_logged_in_user_field('name');
   }
 }

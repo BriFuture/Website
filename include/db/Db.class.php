@@ -383,14 +383,9 @@ class Db implements DbImpl{
         $limit = ' LIMIT '.$select_spec['limit'];
     }
     // echo 'limit: '.$limit;
-
+    $query_str = substr($query, 0, -2).(strlen(@$select_spec['source']) ? (' FROM '.$select_spec['source']) : '').$limit;
     //转义并转化为MYSQL语句,去掉最后的', ' 并且加上 FROM 语句 
-    $mysqlstr = $this->substitude(
-      substr($query, 0, -2).
-      (strlen(@$select_spec['source']) ? (' FROM '.$select_spec['source']) : '').$limit
-      ,
-      @$select_spec['arguments']
-    );
+    $mysqlstr = $this->substitude($query_str, @$select_spec['arguments']);
 
     //得到原始的结果
     $result_raw = $this->query_raw($mysqlstr);
@@ -547,17 +542,6 @@ class Db implements DbImpl{
     
   }
 
-  /**
-   * 取出指定的行
-   */
-  public function select_row($select_spec) {
-    //构造query语句
-    $query = 'SELECT ';
-    //column_as 是将结果集中的列变成相应的值别名，column_from是数据库中存在的列
-    foreach ($select_spec['columns'] as $column_as => $column_from) {
-      $query .= $column_from.(is_int($column_as) ? '' :(' AS '.$column_as)).', ';
-    }
-  }
 
   /**
    * @param  $result  mysqli result
