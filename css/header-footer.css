@@ -1,3 +1,4 @@
+/**  header.css **/
 #header {
   z-index: 100;
   /*min-width: 400px;*/
@@ -58,6 +59,11 @@ div.head-mask {
 .navbar-btn-group {
   margin: 4px;
   vertical-align: middle;
+}
+
+.form-group-hidden {
+  display: none;
+  visibility: hidden;
 }
 
 /*footer.css*/

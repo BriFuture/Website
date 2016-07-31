@@ -37,9 +37,11 @@ if(!defined('VERSION')) {
               <?php endif; ?>
             </div>
           </div>
-          <a href="#" class="navbar-right">
-            <img class="img-circle avatar" src="<?php echo $this->view['avatar']; ?>" alt="avatar <?php echo ' of '.Users::get_logged_in_user_field('name') ?>">
-          </a>
+          <?php if(Users::is_logged_in()): ?>
+            <a href="#" class="navbar-right">
+              <img class="img-circle avatar" src="<?php echo $this->view['avatar']; ?>" alt="avatar <?php echo ' of '.Users::get_logged_in_user_field('name') ?>">
+            </a>
+          <?php endif ?>
         </div>
       </div>
       <div class="visible-xs">

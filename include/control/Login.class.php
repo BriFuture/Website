@@ -45,14 +45,12 @@ class Login extends Page {
     if(!$fromreg) {
       if(!Security::check_form_security_code('login', $this->code)) {
         $this->view['error'] = '登陆有误';
-        echo $this->view['error'];
       } else {
         // $dbusers = new DbUsers();
         $logged = Users::set_logged_in_user($this->handle, $this->passwd);
         switch ($logged) {
           case 0:
             $this->view['error'] = 'Login Failed, Something wrong with Username or Passward（登陆失败。用户名或密码错误）！';
-            echo $this->view['error'];
             break;
           case 1:
             if($this->remember) {

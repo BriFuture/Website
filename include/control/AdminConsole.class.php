@@ -12,9 +12,13 @@ if(!defined('VERSION')) {
 
 class AdminConsole extends Page {
   public function render() {
+    if(!Users::is_manager()) {
+      return;
+    }
     $this->view['title'] = "console page";
     $this->get_options();
     
+    $this->view['test'] = PatternDb::pattern_update_sql(array('columns' => array('img_name' => 'test_name', 'img_path' => 'test_path', 'number' => 1), 'where' => array(array('column' => 'img_id', 'op'=>'=','value' => '1'))), 'images', false);
     $this->inc(__CLASS__);
   }
 

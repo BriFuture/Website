@@ -36,8 +36,8 @@ class DbUsers {
       // Base::fatal_error('数据有错误, ');
       return;
     }
-    $query_str  = 'INSERT INTO users (UID, name, pass, passsalt, level, email, contact, picture, score, reg_time) VALUES ($, $, $, $, $, $, $, $, $, NOW()) ';
-    $result = $this->db->query($query_str, $this->formed_UID(), $arr['name'], $arr['passwd'], $arr['passsalt'], $arr['level'], $arr['email'], $arr['contact'], $arr['picture'], $arr['score']);
+    $query_str  = 'INSERT INTO users (UID, name, pass, passsalt, level, email, contact, avatar, score, reg_time) VALUES ($, $, $, $, $, $, $, $, $, NOW()) ';
+    $result = $this->db->query($query_str, $this->formed_UID(), $arr['name'], $arr['passwd'], $arr['passsalt'], $arr['level'], $arr['email'], $arr['contact'], $arr['avatar'], $arr['score']);
     // return $this->db->last_insert_id();
     //由于没有自增列
     return $result;
@@ -76,7 +76,7 @@ class DbUsers {
    * @param  $who  array('column' => '', 'handle' => '')
    */
   public function select_info($who) {
-    $query_str = 'SELECT `UID`, `name`, `pass`, `passsalt`, `level`, `email`, `contact`, `picture`, `score`, `reg_time`, `reg_IP`, `SID`, `browser`, `last_browser`, `first_login`, `last_login`, `last_IP` FROM users WHERE `'.$who['column'].'` = '. (is_numeric($who['handle']) ? '#' : '$');
+    $query_str = 'SELECT `UID`, `name`, `pass`, `passsalt`, `level`, `email`, `contact`, `avatar`, `score`, `reg_time`, `reg_IP`, `SID`, `browser`, `last_browser`, `first_login`, `last_login`, `last_IP` FROM users WHERE `'.$who['column'].'` = '. (is_numeric($who['handle']) ? '#' : '$');
     $result = $this->db->query($query_str, $who['handle']);
     return $this->db->get_one_assoc($result, true);
   }

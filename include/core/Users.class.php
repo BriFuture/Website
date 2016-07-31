@@ -111,11 +111,13 @@ Class Users{
     $dbusers = new DbUsers();
     $info = $dbusers->select_info(array('column' => 'name', 'handle' => $handle));
     if(self::check_passwd($passwd, $info['pass'], $info['passsalt'])) {
-      var_dump($info['SID']);
+      // var_dump($info['SID']);
       if(is_null($info['SID']) || $info['SID'] == '') {
         $dbusers->update(array('column' => 'name', 'handle' => $handle), array('SID' => session_id()));
         return 1;
       } else {
+        // 账户已登录，挤出先前的登陆
+        $dbusers->update(array('column' => 'name', 'handle' => $handle), array('SID' => session_id()));
         return 2;
       }
     } else {

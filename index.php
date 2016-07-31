@@ -6,7 +6,7 @@
  * last-modify: 0518
  */
 //定义版本
-define('VERSION', '1.0.5');
+define('VERSION', '1.0.52');
 //定义路径常量
 define('WEB_ROOT',     __DIR__."/"            );
 define('INCLUDE_PATH', WEB_ROOT.'include/'    );

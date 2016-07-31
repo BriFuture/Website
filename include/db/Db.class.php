@@ -222,8 +222,7 @@ class Db implements DbImpl{
    * @return  返回转义后的查询语句
    */
   public function argument_to_mysql($argument, $alwaysquote, $arraybracket=false) {
-    if(is_array($argument))   //如果是数组的话
-    {
+    if(is_array($argument)) {  //如果是数组的话
       $parts=array();
 
       foreach ($argument as $subargument) {
@@ -236,20 +235,16 @@ class Db implements DbImpl{
           $result = implode(',', $parts);
       }
     }
-    elseif (isset($argument))
-    {
+    elseif (isset($argument)) {
       //不是数字，添加单引号
-      if($alwaysquote || !is_numeric($argument))
-      {
+      if($alwaysquote || !is_numeric($argument)) {
         $result = "'".$this->escape_string($argument)."'";
       }
-      else
-      {
+      else {
         $result = $this->escape_string($argument);
       }
     }
-    else
-    {
+    else {
       //将$result设置成mysql里的NULL
       $result = 'NULL';
     }
@@ -263,7 +258,7 @@ class Db implements DbImpl{
    * $替换成相应的字符串，加上引号
    * #替换成数字，并且不加引号
    * @param  $query  查询语句
-   * @param  $arguments  需要替换的参数
+   *         $arguments  array() 需要替换的参数 
    */
   public function substitude($query, $arguments) {
     if(!is_array($arguments))

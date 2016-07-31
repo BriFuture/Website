@@ -54,7 +54,8 @@ abstract class Page {
     // $this->view['footer'] = $URLS['body-footer'];
     $this->view['footer'] = VIEW_PATH.'footer-thank.phtml';
     $this->view['logo']   = $URLS['logo'];
-    $this->view['avatar'] = $TEST['avatar'];
+
+    $this->view['avatar'] = Users::get_logged_in_user_field('avatar');
     $this->view['login']  = 'login';
     $this->view['logout']  = 'logout';
     $this->view['reg']  = 'no-reg';

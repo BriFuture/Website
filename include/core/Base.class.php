@@ -78,11 +78,11 @@ class Base {
     if (self::super_post_text('ajax')) {
       //如果是ajax请求
       //将请求转发给ajax
-
+      // var_dump(self::super_post_text('ajax'));
+      Ajax::request(self::super_post_text('request'), self::super_post_text('addons'));
       return;
     }
-    if(self::super_get(self::URL_LAYER_ACTION))
-    {
+    if(self::super_get(self::URL_LAYER_ACTION)) {
       switch (self::super_get(self::URL_LAYER_ACTION)) {
         case 'err':
           //转到错误页面

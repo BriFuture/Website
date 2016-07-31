@@ -12,7 +12,7 @@ if(!defined('VERSION')) {
   <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=0">
   <meta http-equiv="Content-Type" content="text/html;" />
   <meta name="renderer" content="webkit">
-  <title>sunsmell主页</title>
+  <title>SOME INFO</title>
   <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
   <!-- jQuery文件-->
   <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
@@ -20,6 +20,7 @@ if(!defined('VERSION')) {
   <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
   <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <script src="/js/info.js"></script>
   <link rel="stylesheet" type="text/css" href="/css/header-footer.css" />
   <link rel="stylesheet" type="text/css" href="/css/info.css" />
 </head>
@@ -58,6 +59,11 @@ if(!defined('VERSION')) {
       <iframe src="/index.php?action=getip" style="width: 100%; height: 300px"></iframe>
     </div>
     <?php endif; ?>
+    <div>
+      <input type="text" id="num1" name="num1" value="" placeholder="a">+<input type="text" id="num2" name="num2" placeholder="b">=<span id="result" >0</span>
+      <br>
+      <button type="button" onclick="add()">a+b</button>
+    </div>
   </div>
   <?php include $this->view['footer']; ?> 
 </body>
