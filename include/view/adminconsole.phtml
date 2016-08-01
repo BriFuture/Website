@@ -23,51 +23,98 @@ if(!defined('VERSION')) {
   <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
   <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
   <link rel="stylesheet" type="text/css" href="/css/header-footer.css" />
-  <link rel="stylesheet" type="text/css" href="/css/index.css" />
+  <link rel="stylesheet" type="text/css" href="/css/adminconsole.css" />
   <script type="text/javascript" src="/js/header-footer.js"></script>
+  <script type="text/javascript" src="/js/adminconsole.js"></script>
 </head>
 <body>
   <?php include $this->view['header']; ?>
   <div class="jumbotron">
-    <table border="1" class="table">
+    <h3 class="text-center">options</h3>
+    <table border="1" class="table table-striped table-bordered ">
     <tr>
-      <th><p class="text-center">序号</p></th>
-      <th><p class="text-center">name</p></th>
-      <th><p class="text-center">value</p></th>
-      <th><p class="text-center">autoload</p></th>
+      <th><h4 class="text-center">序号</h4></th>
+      <th><h4 class="text-center">name</h4></th>
+      <th><h4 class="text-center">value</h4></th>
+      <th><h4 class="text-center">autoload</h4></th>
+      <th><h4 class="text-center">操作</h4></th>
     </tr>
     <?php foreach ($this->view['options'] as $option): ?>
-      <tr>
-        <td><p class="text-center"><?php echo $option['id']; ?></p></td>
-        <td><p class="text-center"><?php echo $option['name']; ?></p></td>
-        <td><p class="text-center"><?php echo $option['value']; ?></p></td>
-        <td><p class="text-center"><?php echo $option['autoload']; ?></p></td>
+      <?php $counti=0; ?>
+      <tr id="<?php echo 'options_'.$option['id']; ?>">
+        <td><small class="text-center"><?php echo $option['id']; ?></small></td>
+        <td><input type="text" class="full-input" name="name" value="<?php echo $option['name']; ?>" ></td>
+        <td><input type="text" class="full-input" name="value" value="<?php echo $option['value']; ?>" ></td>
+        <td><input type="text" class="full-input" name="autoload" value="<?php echo $option['autoload']; ?>" ></td>
+        <td class="action-td"><button class="btn btn-primary">修改</button> <button class="btn btn-danger ">删除</button></td>
       </tr>
     <?php endforeach ?>
     </table>
 
     <br />
-    <table border="1" class="table">
-    <tr>
-      <th><p class="text-center">序号</p></th>
-      <th><p class="text-center">name</p></th>
-      <th><p class="text-center">path</p></th>
-      <th><p class="text-center">group</p></th>
-      <th><p class="text-center">description</p></th>
-    </tr>
-    <?php foreach ($this->view['images'] as $image): ?>
+    <h3 class="text-center">images</h3>
+    <table border="1" class="table table-striped table-bordered ">
       <tr>
-        <td><p class="text-center"><?php echo $image['img_id']; ?></p></td>
-        <td><p class="text-center"><?php echo $image['img_name']; ?></p></td>
-        <td><p class="text-center"><?php echo $image['img_path']; ?></p></td>
-        <td><p class="text-center"><?php echo $image['img_group']; ?></p></td>
-        <td><p class="text-center"><?php echo $image['description']; ?></p></td>
+        <th><h4 class="text-center">序号</h4></th>
+        <th><h4 class="text-center">name</h4></th>
+        <th><h4 class="text-center">path</h4></th>
+        <th><h4 class="text-center">group</h4></th>
+        <th><h4 class="text-center">description</h4></th>
+        <th><h4 class="text-center">addons</h4></th>
+        <th><h4 class="text-center">操作</h4></th>
       </tr>
-    <?php endforeach ?>
+      <?php $counti=1; ?>
+      <?php foreach ($this->view['images'] as $image): ?>
+        <tr id="<?php echo 'images_'.$image['img_id'] ?>">
+          <td><small><?php echo $counti//echo $image['img_id']; ?></small></td>
+          <td><input type="text" class="full-input" id="img_name" name="img_name" value="<?php echo $image['img_name']; ?>" ></td>
+          <td><input type="text" class="full-input" id="img_path" name="img_path" value="<?php echo $image['img_path']; ?>" ></td>
+          <td><input type="text" class="full-input" id="img_group" name="img_group" value="<?php echo $image['img_group']; ?>" ></td>
+          <td><input type="text" class="full-input" id="description" name="description" value="<?php echo $image['description']; ?>" ></td>
+          <td><input type="text" class="full-input" id="addons" name="addons" value="<?php echo $image['addons']; ?>" ></td>
+          <td class="action-td"><button class="images-alter btn btn-primary">修改</button> <button class="images-delete btn btn-danger">删除</button></td>
+        </tr>
+      <?php $counti++; ?>
+      <?php endforeach ?>
+      <tr class="tr-show image">
+        <td colspan="7" ><button id="image-add-btn" class="btn btn-primary">添加</button></td>
+      </tr>
     </table>
+    <div><p class="text-center text-danger"><?php echo @$this->view['error']['upload-image'] ?></p></div>
+    <div><p class="text-center text-success"><?php echo @$this->view['success']['upload-image'] ?></p></div>
+    <form class="form-horizontal image-form-show" method="post" enctype="multipart/form-data" action="<?php echo $this->view['self-page'] ?>">
+      <div class="form-group">
+        <span class="col-sm-1 col-sm-offset-2">选择图片：</span><input type="file" name="upload-image" id="upload-image" class="col-sm-3">
+      </div>
+      
+      <div class="form-group">
+        <div class="col-sm-2">
+          <input type="text" class="full-input" id="upload_img_name" name="img_name" value="" placeholder="image name">
+        </div>
+        <div class="col-sm-3">
+          <input type="text" class="full-input" id="upload_img_path" name="img_path" value="" placeholder="image path">
+        </div>
+        <div class="col-sm-2">
+          <input type="text" class="full-input" id="upload_img_group" name="img_group" value="" placeholder="image group">
+        </div>
+        <div class="col-sm-2">
+          <input type="text" class="full-input" id="upload_description" name="description" value="" placeholder="image description">
+        </div>
+        <div class="col-sm-2">
+          <input type="text" class="full-input" id="upload_addons" name="addons" value="" placeholder="addons">
+        </div>
+        <div class="col-sm-1">
+          <button id="image-add-confirm-btn" class="btn btn-primary">确认添加</button>
+        </div>
+
+        <input type="hidden" name="upload_image" value="1">
+        <input type="hidden" name="upload_image_key" value="<?php echo $this->view['security_image_key'] ?>">
+      </div>
+    
+    </form>
   </div>
   <div>
-  <!-- <?php echo $this->view['test'] ?>  -->
+  <?php echo @$this->view['test'] ?>  
   </div>
   <?php include $this->view['footer']; ?> 
 </body>

@@ -41,9 +41,10 @@ class PatternDb {
     }
 
     //为了能够直接写入 SQL 函数 而加的循环
-    foreach ($insert['spec_columns'] as $column_name => $column_value) {
-      $query_str .= '`'.$column_name.'`, ';
-    }
+    if(isset($insert['spec_columns']))
+      foreach ($insert['spec_columns'] as $column_name => $column_value) {
+        $query_str .= '`'.$column_name.'`, ';
+      }
 
     $query_str = substr($query_str, 0, -2).') VALUES (';
 
@@ -52,9 +53,10 @@ class PatternDb {
       $query_str .= is_numeric($column_value) ? '#, ':'$, ';
     }
     //为了能够直接写入 SQL 函数 而加的循环
-    foreach ($insert['spec_columns'] as $column_value) {
-      $query_str .= $column_value.', ';
-    }
+    if(isset($insert['spec_columns']))
+      foreach ($insert['spec_columns'] as $column_value) {
+        $query_str .= $column_value.', ';
+      }
     // $query_str .= str_repeat('$, ', count($insert['columns']));
     $query_str = substr($query_str, 0, -2).')';
 
@@ -69,7 +71,7 @@ class PatternDb {
   }
 
   /**
-   * 返回更新数据的 SQL 语句
+   * 返回更新数据的 SQL 语句或者执行例化的 SQL 语句
    * @param  
    *  $update
    *    $update['columns']  array('column_name' => 'some value', ...)
@@ -91,9 +93,10 @@ class PatternDb {
       $query_str .= '`'.$column_name.'` = '.(is_numeric($column_value) ? '#' : '$').', ';
     }
      //为了能够直接写入 SQL 函数 而加的循环
-    foreach ($update['spec_columns'] as $column_name => $column_value) {
-      $query_str .= '`'.$column_name.'` = '.$column_value.', ';
-    }
+    if(isset($update['spec_columns']))
+      foreach (@$update['spec_columns'] as $column_name => $column_value) {
+        $query_str .= '`'.$column_name.'` = '.$column_value.', ';
+      }
     
     $query_str = substr($query_str, 0, -2).' WHERE ';
 
@@ -101,14 +104,61 @@ class PatternDb {
       $query_str .= '`'.$where['column'].'`'. $where['op'].(is_numeric($where['value']) ? ' # ': ' $ ').@$where['next'];
     }
 
-    $db = Db::getInstance();
 
     $update_value = array_values($update['columns']);
     foreach ($update['where'] as $where) {
       $update_value[] = $where['value'];
     }
 
+    $db = Db::getInstance();
     $pattern_str = $db->substitude($query_str, $update_value);
+
+    if(!$excute)  {
+      return $pattern_str;
+    } else {
+      return $db->query($pattern_str);
+    }
+  }
+
+  /**
+   * 返回查找数据的 SQL 语句或者执行例化的 SQL 语句
+   * @param  
+   *  $select
+   *    $select['columns']  array('some columns', ...)
+   *    $select['spec_columns']  array('some columns', ...)
+   *    $select['where']  array(array('column' => 'some value', 'op' => 'some value', 'value' => *      'some value', 'next' => 'and or '), ...)
+   */
+  public static function pattern_select_sql($select, $table=null, $excute=false) {
+    if(!is_null($table)) {
+      $select_table = $table;
+    } else  if(isset($update['table'])) {
+      $select_table = $update['table'];
+    } else {
+      Base::fatal_error('No table specified');
+    }
+
+    $query_str = 'SELECT ';
+
+    foreach ($select['columns'] as $column) {
+      $query_str .= '`'.$column.'`, ';
+    }
+    //为了能够直接写入 SQL 函数而加的循环
+    if(isset($select['spec_columns']))
+      foreach ($select['spec_columns'] as $column) {
+        $query_str .= $column.', ';
+      }
+    
+    $query_str = substr($query_str, 0, -2).' WHERE ';
+
+    foreach ($select['where'] as $where) {
+      $query_str .= '`'.$where['column'].'` '. $where['op'].(is_numeric($where['value']) ? ' # ': ' $ ').@$where['next'];
+    }
+
+
+    $select_where = array_values($select['where']);
+
+    $db = Db::getInstance();
+    $pattern_str = $db->substitude($query_str, $select_where);
 
     if(!$excute)  {
       return $pattern_str;

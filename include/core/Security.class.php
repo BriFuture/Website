@@ -109,7 +109,7 @@ class Security {
           //表单时间比当前时间大，表单有问题
           $report_problems[] = 'time '.($timestamp-$timenow).'s in future';
         }
-        elseif($timestamp < ($timenow-FORM_EXPIRY_SECS)) {
+        elseif($timestamp < ($timenow - FORM_EXPIRY_SECS)) {
           //尚未超时
           $silent_problems[] = '在 '.($timenow-$timestamp).'s 后超时';
         }

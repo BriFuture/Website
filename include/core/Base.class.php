@@ -260,8 +260,7 @@ class Base {
       }
     }
 
-    $options = new Options();
-    $options->preload_options();
+    Options::preload_options();
 
   }
 

@@ -62,9 +62,7 @@ class Options {
    */  
   public static function load_option_results($results) {
   	foreach($results as $result) {
-  		foreach($result as $name => $value) {
-  			self::$options_cache[$name] = $value;
-      }
+      self::$options_cache[$result['name']] = $result['value'];
     }
 
   	self::$options_loaded=true;
@@ -75,12 +73,11 @@ class Options {
    * @param  项的名称
    * @param  新的值
    */
-  public static function set_option($name, $value, $todatabase=true) {
-  	if($todatabase && isset($value)) {
+  public static function set_option($name, $value, $autoload, $todatabase=true) {
+  	if($todatabase) {
       $dbOptions = new DbOption();
-      $dbOptions->set_option();
+      $dbOptions->set_option($name, $value, $autoload);
     }
-
   }
 	
 	/**
@@ -92,32 +89,6 @@ class Options {
   		self::set_option($name, self::default_option($name));
     }
   }
-	
-	/**
-   * 返回默认的选项，在数据库中option没有相应的值时或者没有option时新建
-   * @param  $name
-   */
-  public static function default_option($name) {
-  	$fixed_defaults = array(
-  		'allow_change_username' => 1,
-  		// 'allow_'
-  	);
-
-  	if(isset($fixed_defaults[$name])) {
-  		$value = $fixed_defaults[$name];
-    }
-  	else {
-  		switch ($name) {
-  			case 'value':
-  				# code...
-  				break;
-  			
-  			default:
-  				# code...
-  				break;
-  		}
-    }
-  }
 
   /**
    * 对数据库的数据进行缓存，缓存后直接读取某些数据
@@ -126,23 +97,45 @@ class Options {
    * @param  $value  相应的值
    */
   public static function opt($name, $value=null) {
-    global $options_cache;
-
     //如果没有设置$value 就是取出相应的值
-    if(!isset($value) && isset($options_cache[$name]))
-    {
-      return $options_cache[$name];
+    if(!isset($value) && isset(self::$options_cache[$name])) {
+      return self::$options_cache[$name];
     }
 
     //设置相应的键值
-    if(isset($value))
-    {
-      Options::set_option($name, $value);
+    if(isset($value)) {
+      self::set_option($name, $value);
     }
 
-    $options = Options::get_option(array($name));
+    $options = self::get_option(array($name));
 
     return $options[$name];
+  }
+
+  /**
+   * 返回默认的选项，在数据库中option没有相应的值时或者没有option时新建
+   * @param  $name
+   */
+  public static function default_option($name) {
+    $fixed_defaults = array(
+      'allow_change_username' => 1,
+      // 'allow_'
+    );
+
+    if(isset($fixed_defaults[$name])) {
+      $value = $fixed_defaults[$name];
+    }
+    else {
+      switch ($name) {
+        case 'value':
+          # code...
+          break;
+        
+        default:
+          # code...
+          break;
+      }
+    }
   }
 	
 }

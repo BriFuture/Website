@@ -31,6 +31,7 @@ class DbImages {
    *    $image['columns']['group']       分组
    *    $image['columns']['description'] 描述图片
    *    $image['columns']['addons']      额外信息
+   * @return 
    **/
   public function create($image) {
     return PatternDb::pattern_insert_sql($image, 'images', true);
@@ -47,10 +48,21 @@ class DbImages {
 
   /**
    * 删除记录
+   * @param  $image  
+   *          array('where_column' => 'where_value')  or value
    */
-  public function delete($name) {
-    $query_str = 'DELETE FROM `images` WHERE `name`=$';
-    $this->db->query($query_str, $name);
+  public function delete($image) {
+    if(is_array($image)) {
+      $where = array_keys($image);
+      $where = $where[0];
+      $value = array_values($image);
+      $value = $value[0];
+      $query_str = 'DELETE FROM `images` WHERE `'.$where.'` = '.(is_numeric($value) ? ' # ' :' $ ');
+      return $this->db->query($query_str, $value);
+    } else {
+      $query_str = 'DELETE FROM `images` WHERE `img_id` = #';
+      return $this->db->query($query_str, $image);
+    }
   }
 
   /**

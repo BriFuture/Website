@@ -17,7 +17,7 @@ class Upload() {
    * 最大上传文件大小
    * @return  允许的最大值,以字节为单位
    */
-  public function get_max_upload_size() {
+  public static function get_max_upload_size() {
     $mindb = 16777215;  // MEDIUMBLOB column type
 
     //从php.ini中读取上传的最大值
@@ -39,7 +39,7 @@ class Upload() {
   /**
    *
    */
-  public function upload_file($local_filename, $source_filename, $max_filesize=null, $only_image=false, $image_maxwidth=null, $image_maxheight=null) {
+  public static function upload_file($local_filename, $source_filename, $max_filesize=null, $only_image=false, $image_maxwidth=null, $image_maxheight=null) {
 
   }
 
@@ -47,7 +47,7 @@ class Upload() {
    * 上传单个文件时
    * @return  bool
    */
-  public function upload_one_file($max_filesize=null, $only_image=false, $image_maxwidth=null, $image_maxheight=null) {
+  public static function upload_one_file($max_filesize=null, $only_image=false, $image_maxwidth=null, $image_maxheight=null) {
     $file = reset($_FILES);
 
     return upload_file($file['tmp_name'], $file['name'], $max_filesize, $only_image, $image_maxwidth, $image_maxheight);

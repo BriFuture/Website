@@ -1,0 +1,25 @@
+.table {
+  text-align: center;
+}
+
+.full-input {
+  width: 100%;
+  margin: auto;
+  vertical-align: center;
+}
+
+.action-td {
+  width: 8%;
+  vertical-align: center;
+}
+
+.tr-hidden {
+  display: none;
+  visibility:hidden;
+}
+
+.image-form-hidden {
+  display: none;
+  visibility:hidden;
+}
+

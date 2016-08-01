@@ -13,7 +13,11 @@ if(!defined('VERSION')) {
 
 class Gallary extends Page {
   public function render() {
-
+    $this->view['title'] = 'Gallary';
     $this->inc(__CLASS__);
+  }
+
+  public function get_images() {
+    
   }
 }

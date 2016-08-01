@@ -46,19 +46,16 @@ class DbOptions {
    *          如果是更新的话，返回影响的行数
    */
   public function set_option($name, $value, $autoload) {
-    if(!isset($this->options))
-    {
+    if(!isset($this->options)) {
       $this->get_all_options();
     }
 
     // 更新 option
-    if(array_key_exists($name, $this->options)) 
-    {
+    if(array_key_exists($name, $this->options)) {
       $this->update($name, $value, $autoload);
       return $this->db->affected_rows();
     }
-    else
-    { 
+    else { 
       // 创建 option
       $this->create($name, $value, $autoload);
       return $this->db->last_insert_id();
@@ -89,24 +86,14 @@ class DbOptions {
   /**
    * 读取数据库中的option的值
    * @param  $name  option 的名称
-   * @param  $value  要设置的值
    */
   public function get_option($name) {
-    foreach ($this->options as $index => $option) 
-    {
-      if($option['name'] === $name)
-      {
+    foreach ($this->options as $index => $option) {
+      if($option['name'] === $name) {
         return $option;
       }
     }
-    return false;
-  }
-
-  /**
-   *
-   */
-  public function get_column_value($column) {
-
+    return null;
   }
 
   /**

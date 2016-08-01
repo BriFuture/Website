@@ -1,6 +1,10 @@
 更新说明
 ====
 
+### 8 月 1 日
+- 在 adminconsole 页面使用 post 传递参数到后台，后台根据相应的参数做出响应，返回结构化的 JSON 数据到前端，（AJAX）。并且在 adminconsole 页面实现了图片上传功能，修改和删除功能。
+
+
 ### 7 月 26 日
 - 将 control 层的 view_xxx() 方法换成了 render() 方法。每个 control 层的类对应一个页面。
 - 将 view 层的 index.phtml 显示方式换成了从数据库中读取图片信息并显示。更换了 Block 的显示方法。

@@ -1,0 +1,36 @@
+<?php 
+if(!defined('VERSION')) {
+  header('Location:/');
+  exit();
+}
+?>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta  charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <!-- <meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1, width=device-width"> -->
+  <!-- <meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1" > -->
+  <meta http-equiv="Content-Type" content="text/html;" />
+  <meta name="description" content="Gallary" />
+  <title><?php echo $this->view['title'] ?></title>
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+  <!-- jQuery文件-->
+  <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+  <!-- 新 Bootstrap 核心 CSS 文件 -->
+  <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+  <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="/css/header-footer.css" />
+  <link rel="stylesheet" type="text/css" href="/css/index.css" />
+  <script type="text/javascript" src="/js/header-footer.js"></script>
+</head>
+<body>
+  <?php include $this->view['header']; ?>
+  <div>
+  <!-- <?php echo $this->view['test'] ?>  -->
+  </div>
+  <?php include $this->view['footer']; ?> 
+</body>
+</html>
