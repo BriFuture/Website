@@ -50,9 +50,17 @@ class Ajax {
     switch ($action) {
       case 'modify':
         $img_id = (int) Base::super_post_text("id");
-        // echo "{".$img_id.', '.$img_name.', '.$img_path.', '.$img_group.', '.$description.', '.$addons.'}';
-        $img['where'] = array(array('column' => 'img_id', 'op'=> '=', 'value' => $img_id));
-        $status = $dbimages->update($img);
+        $old_img = $dbimages->get_one_image($img_id);
+        $img_file = WEB_ROOT.$old_img['img_path'];
+        $rename_file = Base::super_post_text("rename_file");
+        if($rename_file) {
+          $status = rename($img_file, WEB_ROOT.$img['columns']['img_path']);
+        }
+        if(!$rename_file || ($rename_file && $status)) {
+          $img['where'] = array(array('column' => 'img_id', 'op'=> '=', 'value' => $img_id));
+          $status = $dbimages->update($img);
+        }
+
         echo json_encode(array('status' => $status));
         break;
       case 'delete':
@@ -82,5 +90,47 @@ class Ajax {
         }
         break;*/
     }
+  }
+
+  public static function alter_option() {
+    $action = Base::super_post_text('action');
+    $option['columns']['id'] = (int) Base::super_post_text("id");
+    $option['columns']['name'] = Base::super_post_text("option_name");
+    $option['columns']['value'] = Base::super_post_text("option_value");
+    $option['columns']['autoload'] = Base::super_post_text("option_autoload");
+
+    $dboptions = new DbOptions();
+    switch ($action) {
+      case 'modify':
+        // echo json_encode(array('id' => $option['columns']['id'], 'name' => $option['columns']['name'], 'value' => $option['columns']['value'], 'autoload' => $option['columns']['autoload']));
+        $status = $dboptions->set_option($option['columns']['name'], $option['columns']['value'], $option['columns']['autoload']);
+        echo json_encode(array('status' => $status));
+        break;
+      case 'add':
+        // echo json_encode(array('id' => $option['columns']['id'], 'name' => $option['columns']['name'], 'value' => $option['columns']['value'], 'autoload' => $option['columns']['autoload']));
+        $result = '';
+        if(strlen($option['columns']['name'])) {
+          $result = $dboptions->set_option($option['columns']['name'], $option['columns']['value'], $option['columns']['autoload']);
+          $status = 1;
+        } else {
+          $status = 0;
+        }
+        echo json_encode(array('status' => $status, 'insert_id' => $result));
+        break;
+      case 'delete':
+        // echo json_encode(array('status' => $option['columns']['id']));
+        $status = $dboptions->delete($option['columns']['name']);
+        // $status = 1;
+        echo json_encode(array('status' => $status, 'name'=> $option['columns']['name']));
+        break;
+    }
+  }
+
+  public static function excute_raw_sql() {
+    $raw_sql = Base::super_post_text("sql_str");
+    $db = Db::getInstance();
+    $result = $db->query_raw($raw_sql);
+    // $result = "excute";
+    echo json_encode(array('status' => 1, 'excute_sql' => $raw_sql, 'excute_result' => "done" ));
   }
 }

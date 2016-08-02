@@ -30,7 +30,7 @@ if(!defined('VERSION')) {
 </head>
 <body>
   <?php include $this->view['header']; ?>
-  <div class="">
+  <div class="container">
     <div id="carousel-index" class="carousel slide" data-ride="carousel">
       <!-- Indicators -->
       <ol class="carousel-indicators">
@@ -65,7 +65,8 @@ if(!defined('VERSION')) {
       </a>
     </div>
   </div>
-  <div class="container">
+  <div class="container  wrapper">
+    <br /><br /><br />
     <div class="container-fluid marketing">
       <?php $counti=0 ?>
       <?php  foreach($this->view['block'] as $block): ?>
@@ -82,7 +83,7 @@ if(!defined('VERSION')) {
             </div>
           </a>
         </div>
-        <div class="col-sm-3 <?php  if($counti%3 != 0) echo "col-sm-offset-1"; ?> col-link-item hidden-xs">
+        <div class="col-sm-3 col-link-item hidden-xs">
         <!-- horizontal arrangemet first and remains vertical -->
           <a class="" href="<?php echo $block['href'];?>">
             <div class="">  
@@ -98,13 +99,15 @@ if(!defined('VERSION')) {
       <?php $counti++; ?>
       <?php endforeach; ?>
     </div> 
-  </div> 
-  <div class="container-fluid">
+  <!-- </div> 
+  <div class="container-fluid"> -->
+    <br />
     <div class="bgm">
       <audio src="/static/music/inuyasha_bgm.mp3" controls="controls"  loop="loop">
         您的浏览器不支持 audio 标签。
       </audio>
     </div>
+    <br />
   </div>
   <?php include $this->view['footer']; ?> 
 </body>

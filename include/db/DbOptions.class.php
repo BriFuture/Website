@@ -18,7 +18,7 @@ class DbOptions {
    */
   private $db;
   const TABLE_NAME = 'options';
-  private $options = array();
+  // private $options = array();
 
   public function __construct() {
     $this->db = Db::getInstance();
@@ -34,7 +34,8 @@ class DbOptions {
     // 不使用REPLACE 因为REPLACE会将id自动+1
     // $this->db->query_sub('REPLACE options (name, value) VALUES ($, $)', $name, $value);
     $query_str = 'INSERT INTO options (`name`, `value`, `autoload`) VALUES ($, $, $)';
-    $this->db->query($query_str, $name, $value, ($autoload ? 'y' : 'n') );
+    // return $this->db->query($query_str, $name, $value, ($autoload ? 'y' : 'n') );
+    $this->db->query($query_str, $name, $value, $autoload);
   }
 
   /**
@@ -46,16 +47,25 @@ class DbOptions {
    *          如果是更新的话，返回影响的行数
    */
   public function set_option($name, $value, $autoload) {
-    if(!isset($this->options)) {
-      $this->get_all_options();
-    }
+    // if(!isset($this->options)) {
+    $options = $this->get_all_options();
+    // }
 
+    // print_r($options);
+    $find = false;
+    foreach ($options as $option) {
+      foreach ($option as $option_value) {
+        if($option_value == $name) {
+          $find = true;
+        }
+      }
+    }
+    // echo $value;
     // 更新 option
-    if(array_key_exists($name, $this->options)) {
+    if($find) {
       $this->update($name, $value, $autoload);
       return $this->db->affected_rows();
-    }
-    else { 
+    } else { 
       // 创建 option
       $this->create($name, $value, $autoload);
       return $this->db->last_insert_id();
@@ -71,7 +81,7 @@ class DbOptions {
    */
   public function update($name, $value, $autoload) {
     $query_str = 'UPDATE `options` SET `value`=$, `autoload`=$ WHERE `name`=$';
-    $this->db->query($query_str, $value, $autoload, $name);
+    return $this->db->query($query_str, $value, $autoload, $name);
   }
 
   /**
@@ -80,7 +90,7 @@ class DbOptions {
    */
   public function delete($name) {
     $query_str = 'DELETE FROM `options` WHERE `name`=$';
-    $this->db->query($query_str, $name);
+    return $this->db->query($query_str, $name);
   }
 
   /**
@@ -106,7 +116,7 @@ class DbOptions {
     $query_str = 'SELECT `id`, `name`, `value`, `autoload` FROM `options`';
     $result = $this->db->query($query_str);
 
-    $this->options = Db::get_all_assoc($result);
-    return $this->options;
+    $options = Db::get_all_assoc($result);
+    return $options;
   }
 }

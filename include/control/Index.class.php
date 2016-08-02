@@ -26,12 +26,12 @@ class Index extends Page{
         'description' => 'Some Tested Info',
         'img'         => 'data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==', 
       ),
-      array(
-        'href'        => Base::get_url_path("TestJsGame"),
-        'title'       => 'My Game In test',
-        'description' => 'My JS Game In Test',
-        'img'         => 'data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==',
-      ),
+      // array(
+      //   'href'        => Base::get_url_path("TestJsGame"),
+      //   'title'       => 'My Game In test',
+      //   'description' => 'My JS Game In Test',
+      //   'img'         => 'data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==',
+      // ),
       array(
         'href'        => Base::get_url_path('Blog'),
         'title'       => 'My Blog',

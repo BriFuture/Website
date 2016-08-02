@@ -43,14 +43,42 @@ if(!defined('VERSION')) {
       <?php $counti=0; ?>
       <tr id="<?php echo 'options_'.$option['id']; ?>">
         <td><small class="text-center"><?php echo $option['id']; ?></small></td>
-        <td><input type="text" class="full-input" name="name" value="<?php echo $option['name']; ?>" ></td>
-        <td><input type="text" class="full-input" name="value" value="<?php echo $option['value']; ?>" ></td>
-        <td><input type="text" class="full-input" name="autoload" value="<?php echo $option['autoload']; ?>" ></td>
+        <td><input type="text" class="full-input" id="option_name" name="name" value="<?php echo $option['name']; ?>" ></td>
+        <td><input type="text" class="full-input" id="option_value" name="value" value="<?php echo $option['value']; ?>" ></td>
+        <td><input type="text" class="full-input" id="option_autoload" name="autoload" value="<?php echo $option['autoload']; ?>" ></td>
         <td class="action-td"><button class="btn btn-primary">修改</button> <button class="btn btn-danger ">删除</button></td>
       </tr>
     <?php endforeach ?>
+      <tr class="option">
+        <td colspan="6" ><button id="option-add-btn" class="btn btn-primary">添加</button></td>
+      </tr>
+      <tr id="options_add" class="add-option hidden">
+        <td> </td>
+        <td><input type="text" class="full-input" id="option_name" name="option_name" value="" placeholder="option name"></td>
+        <td><input type="text" class="full-input" id="option_value" name="option_value" value="" placeholder="option value"></td>
+        <td><input type="text" class="full-input" id="option_autoload" name="option_autoload" value="" placeholder="option autoload"></td>
+        <td><button id="option-add-confirm-btn" class="btn btn-primary">确认添加</button></td>
+      </tr>
     </table>
-
+    <!-- <div class="div-form option-form ">
+      <p></p>
+      <form method="post" action="<?php echo $this->view['self-page'] ?>" class="form-horizontal ">
+        <div class="form-group">
+          <div class="col-sm-3 col-sm-offset-1">
+            <input type="text" class="full-input" id="option_name" name="option_name" value="" placeholder="option name">
+          </div>
+          <div class="col-sm-3 ">
+            <input type="text" class="full-input" id="option_value" name="option_value" value="" placeholder="option value">
+          </div> 
+          <div class="col-sm-3 ">
+            <input type="text" class="full-input" id="option_autoload" name="option_autoload" value="" placeholder="option autoload">
+          </div>
+          <div class="col-sm-2">
+            <button id="option-add-confirm-btn" class="btn btn-primary">确认添加</button>
+          </div>
+        </div>
+      </form>
+    </div> -->
     <br />
     <h3 class="text-center">images</h3>
     <table border="1" class="table table-striped table-bordered ">
@@ -76,46 +104,69 @@ if(!defined('VERSION')) {
         </tr>
       <?php $counti++; ?>
       <?php endforeach ?>
-      <tr class="tr-show image">
+      <tr class="image">
         <td colspan="7" ><button id="image-add-btn" class="btn btn-primary">添加</button></td>
       </tr>
     </table>
-    <div><p class="text-center text-danger"><?php echo @$this->view['error']['upload-image'] ?></p></div>
-    <div><p class="text-center text-success"><?php echo @$this->view['success']['upload-image'] ?></p></div>
-    <form class="form-horizontal image-form-show" method="post" enctype="multipart/form-data" action="<?php echo $this->view['self-page'] ?>">
-      <div class="form-group">
-        <span class="col-sm-1 col-sm-offset-2">选择图片：</span><input type="file" name="upload-image" id="upload-image" class="col-sm-3">
-      </div>
-      
-      <div class="form-group">
-        <div class="col-sm-2">
-          <input type="text" class="full-input" id="upload_img_name" name="img_name" value="" placeholder="image name">
+    <div>
+      <p class="text-center bg-danger"><?php echo @$this->view['error']['upload-image'] ?></p>
+      <!-- <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
+    </div>
+    <div>
+      <p class="text-center bg-success"><?php echo @$this->view['success']['upload-image'] ?></p><!-- <button type="button" class="close" aria-label="Close">
+      <span aria-hidden="true">&times;</span></button> -->
+    </div>
+    <div class="div-form image-form hidden">
+      <p></p>
+      <form class="form-horizontal " method="post" enctype="multipart/form-data" action="<?php echo $this->view['self-page'] ?>">
+        <div class="form-group">
+          <span class="col-sm-1 col-sm-offset-2">选择图片：</span><input type="file" name="upload-image" id="upload-image" class="col-sm-3">
         </div>
-        <div class="col-sm-3">
-          <input type="text" class="full-input" id="upload_img_path" name="img_path" value="" placeholder="image path">
-        </div>
-        <div class="col-sm-2">
-          <input type="text" class="full-input" id="upload_img_group" name="img_group" value="" placeholder="image group">
-        </div>
-        <div class="col-sm-2">
-          <input type="text" class="full-input" id="upload_description" name="description" value="" placeholder="image description">
-        </div>
-        <div class="col-sm-2">
-          <input type="text" class="full-input" id="upload_addons" name="addons" value="" placeholder="addons">
-        </div>
-        <div class="col-sm-1">
-          <button id="image-add-confirm-btn" class="btn btn-primary">确认添加</button>
-        </div>
+        
+        <div class="form-group">
+          <div class="col-sm-2">
+            <input type="text" class="full-input" id="upload_img_name" name="img_name" value="" placeholder="image name">
+          </div>
+          <div class="col-sm-3">
+            <input type="text" class="full-input" id="upload_img_path" name="img_path" value="" placeholder="image path">
+          </div>
+          <div class="col-sm-2">
+            <input type="text" class="full-input" id="upload_img_group" name="img_group" value="" placeholder="image group">
+          </div>
+          <div class="col-sm-2">
+            <input type="text" class="full-input" id="upload_description" name="description" value="" placeholder="image description">
+          </div>
+          <div class="col-sm-2">
+            <input type="text" class="full-input" id="upload_addons" name="addons" value="" placeholder="addons">
+          </div>
+          <div class="col-sm-1">
+            <button id="image-add-confirm-btn" class="btn btn-primary">确认添加</button>
+          </div>
 
-        <input type="hidden" name="upload_image" value="1">
-        <input type="hidden" name="upload_image_key" value="<?php echo $this->view['security_image_key'] ?>">
-      </div>
+          <input type="hidden" name="upload_image" value="1">
+          <input type="hidden" name="upload_image_key" value="<?php echo $this->view['security_image_key'] ?>">
+        </div>
+      
+      </form>
+    </div>
+  </div>
     
-    </form>
+  <div class="div-form container hidden ">
+    <!-- <form class="form-horizontal"> -->
+      <div class="form-group">
+        <p></p>
+        <textarea class="form-control" id="sql_str_textarea" placeholder="raw sql" rows="4"></textarea>
+        <input type="hidden" class="full-input" name="sql_str" id="sql_str">
+      </div>
+      <div class="form-group">
+        <button id="raw_sql_btn" class="btn btn-primary col-sm-offset-5">执行 SQL 语句</button>
+      </div>
+      <div class="form-group">
+        <p id="sql_excute_result"></p>
+      </div>
+    <!-- </form> -->
   </div>
-  <div>
-  <?php echo @$this->view['test'] ?>  
-  </div>
+  <br><br><br><br>
   <?php include $this->view['footer']; ?> 
 </body>
 </html>

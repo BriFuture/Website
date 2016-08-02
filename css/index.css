@@ -31,14 +31,27 @@
   text-decoration: none;
 }
 
+.container.wrapper {
+  background-color: #EBEBEC;
+}
+
 @media (min-width: 768px)  {
   #carousel-index {
-    margin-bottom: 60px;
+    margin: -2px auto 60px;
+
+  }
+  #carousel-index img{
+    width: 1166px;
+    height: 655px;
+  }
+  .col-link-item {
+    margin-left: 6.2%;
   }
   .col-link-item img {
     width: 120px;
     height: 120px;
   }
+
 
 }
 

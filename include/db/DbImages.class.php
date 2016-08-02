@@ -68,9 +68,9 @@ class DbImages {
   /**
    * 通过名称得到图片
    */
-  public function get_one_image($name) {
-    $query_str = 'SELECT `img_id`, `img_name`, `img_path`, `img_group`, `description`, `addons` FROM `images` WHERE `img_name`=$';
-    $result = $this->db->query($query_str, $name);
+  public function get_one_image($id) {
+    $query_str = 'SELECT `img_id`, `img_name`, `img_path`, `img_group`, `description`, `addons` FROM `images` WHERE `img_id` = #';
+    $result = $this->db->query($query_str, $id);
 
     return Db::get_one_assoc($result);
   }
